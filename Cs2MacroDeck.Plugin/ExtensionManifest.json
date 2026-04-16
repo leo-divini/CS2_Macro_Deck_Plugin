@@ -1,0 +1,11 @@
+{
+  "type": "Plugin",
+  "name": "CS2 GSI for Macro Deck",
+  "author": "LeoM",
+  "repository": "https://github.com/leo-divini/CS2_Macro_Deck_Plugin",
+  "packageId": "LeoM.Cs2Gsi",
+  "version": "0.1.0",
+  "target-plugin-api-version": 40,
+  "target-macro-deck-version": "2.15.0",
+  "dll": "Cs2MacroDeck.Plugin.dll"
+}

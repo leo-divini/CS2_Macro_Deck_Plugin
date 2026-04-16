@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Cs2Gsi.Listener/Cs2Gsi.Listener.csproj" />
+  <Project Path="Cs2Gsi.Core/Cs2Gsi.Core.csproj" />
+  <Project Path="Cs2MacroDeck.Plugin/Cs2MacroDeck.Plugin.csproj" />
+</Solution>
