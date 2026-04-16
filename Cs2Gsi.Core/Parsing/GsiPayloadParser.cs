@@ -26,12 +26,16 @@ public static class GsiPayloadParser
                 state.Player.Helmet = ps.TryGetProperty("helmet", out var he) && he.GetBoolean();
                 state.Player.Money = ps.TryGetProperty("money", out var m) ? m.GetInt32() : 0;
                 state.Player.KillsRound = ps.TryGetProperty("round_kills", out var rk) ? rk.GetInt32() : 0;
-                state.Player.KillsTotal = ps.TryGetProperty("kills", out var kt) ? kt.GetInt32() : 0;
-                state.Player.Assists = ps.TryGetProperty("assists", out var ast) ? ast.GetInt32() : 0;
-                state.Player.Deaths = ps.TryGetProperty("deaths", out var d) ? d.GetInt32() : 0;
             }
             state.Player.Alive = state.Player.Hp > 0;
             state.Player.Team = player.TryGetProperty("team", out var t) ? t.GetString() ?? "" : "";
+
+            if (player.TryGetProperty("match_stats", out var stats))
+            {
+                state.Player.KillsTotal = stats.TryGetProperty("kills", out var kt) ? kt.GetInt32() : 0;
+                state.Player.Assists = stats.TryGetProperty("assists", out var ast) ? ast.GetInt32() : 0;
+                state.Player.Deaths = stats.TryGetProperty("deaths", out var d) ? d.GetInt32() : 0;
+            }
 
             // Arma attiva
             if (player.TryGetProperty("weapons", out var weapons))
@@ -39,7 +43,7 @@ public static class GsiPayloadParser
                 foreach (var w in weapons.EnumerateObject())
                 {
                     if (w.Value.TryGetProperty("state", out var ws) &&
-                        ws.GetString() == "active")
+                        string.Equals(ws.GetString(), "active", StringComparison.OrdinalIgnoreCase))
                     {
                         state.Player.ActiveWeapon = w.Value.TryGetProperty("name", out var wn) ? wn.GetString() ?? "" : "";
                         state.Player.WeaponType = w.Value.TryGetProperty("type", out var wt) ? wt.GetString() ?? "" : "";
@@ -55,6 +59,7 @@ public static class GsiPayloadParser
         if (root.TryGetProperty("round", out var round))
         {
             state.Round.Phase = round.TryGetProperty("phase", out var rp) ? rp.GetString() ?? "" : "";
+            state.Bomb.State = round.TryGetProperty("bomb", out var rb) ? rb.GetString() ?? "" : "";
         }
 
         // Map
@@ -76,10 +81,24 @@ public static class GsiPayloadParser
         // Bomb
         if (root.TryGetProperty("bomb", out var bomb))
         {
-            state.Bomb.State = bomb.TryGetProperty("state", out var bs) ? bs.GetString() ?? "" : "";
-            state.Bomb.Site = bomb.TryGetProperty("position", out var bp) ? bp.GetString() ?? "" : "";
+            state.Bomb.State = bomb.TryGetProperty("state", out var bs) ? bs.GetString() ?? "" : state.Bomb.State;
+            state.Bomb.Position = bomb.TryGetProperty("position", out var bp) ? GetStringValue(bp) : "";
+            state.Bomb.Site = state.Bomb.Position;
+            state.Bomb.Timer = bomb.TryGetProperty("countdown", out var bc) ? GetStringValue(bc) : "";
         }
 
         return state;
+    }
+
+    private static string GetStringValue(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.String => element.GetString() ?? "",
+            JsonValueKind.Number => element.GetRawText(),
+            JsonValueKind.True => "true",
+            JsonValueKind.False => "false",
+            _ => ""
+        };
     }
 }

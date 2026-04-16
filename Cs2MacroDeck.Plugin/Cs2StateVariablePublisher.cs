@@ -150,6 +150,7 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.weapon.ammo_reserve", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.bomb.state", "", VariableType.String);
         Set(currentPlugin, "cs2md.bomb.site", "", VariableType.String);
+        Set(currentPlugin, "cs2md.bomb.position", "", VariableType.String);
         Set(currentPlugin, "cs2md.bomb.timer", "", VariableType.String);
     }
 
@@ -183,6 +184,7 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.weapon.ammo_reserve", state.Player.AmmoReserve, VariableType.Integer);
         Set(currentPlugin, "cs2md.bomb.state", state.Bomb.State, VariableType.String);
         Set(currentPlugin, "cs2md.bomb.site", state.Bomb.Site, VariableType.String);
+        Set(currentPlugin, "cs2md.bomb.position", state.Bomb.Position, VariableType.String);
         Set(currentPlugin, "cs2md.bomb.timer", state.Bomb.Timer, VariableType.String);
     }
 

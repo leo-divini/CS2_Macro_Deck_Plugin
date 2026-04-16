@@ -102,6 +102,7 @@ Example config:
         "player_id"      "1"
         "player_state"   "1"
         "player_weapons" "1"
+        "player_match_stats" "1"
         "bomb"           "1"
     }
 }
@@ -138,8 +139,11 @@ cs2md.weapon.ammo_clip
 cs2md.weapon.ammo_reserve
 cs2md.bomb.state
 cs2md.bomb.site
+cs2md.bomb.position
 cs2md.bomb.timer
 ```
+
+`cs2md.bomb.position` is the raw CS2 GSI coordinate string. `cs2md.bomb.site` is kept as a compatibility alias for now; automatic A/B site detection is not implemented yet.
 
 ## Debugging
 
@@ -150,6 +154,12 @@ http://127.0.0.1:3333/state
 ```
 
 If the endpoint returns HTTP 200 but all values are empty or zero, the plugin is listening but CS2 has not sent useful GSI data yet. Start CS2, enter a training session or match, and reload `/state`.
+
+To inspect the latest raw CS2 GSI payload received by the plugin:
+
+```text
+http://127.0.0.1:3333/raw
+```
 
 To run the optional console listener instead of the Macro Deck plugin:
 
