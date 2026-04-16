@@ -1,6 +1,6 @@
 # CS2 GSI for Macro Deck
 
-CS2 GSI for Macro Deck is a Macro Deck 2 plugin that receives Counter-Strike 2 Game State Integration data locally and publishes it as Macro Deck variables.
+CS2 GSI for Macro Deck is a Macro Deck 2 plugin for the Macro Deck Extension Store. It receives Counter-Strike 2 Game State Integration data locally and publishes it as Macro Deck variables.
 
 The plugin listens on `http://127.0.0.1:3333/`, accepts CS2 GSI `POST` payloads, and exposes the latest parsed state at `http://127.0.0.1:3333/state` for local debugging.
 
@@ -11,7 +11,7 @@ This project is in early development. It currently builds and loads locally in M
 Current known blockers before store submission:
 
 - The local build emits warning `MSB3277` for `WindowsBase` because the project references the installed `Macro Deck 2.dll` directly.
-- A plugin icon and final release documentation still need to be completed.
+- An extension icon and final release documentation still need to be completed.
 
 ## Requirements
 
