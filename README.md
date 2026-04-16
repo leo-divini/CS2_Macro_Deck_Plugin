@@ -190,6 +190,9 @@ The plugin listens only on `127.0.0.1` and receives local CS2 Game State Integra
 - Add `Plugin.png` and `ExtensionIcon.png`.
 - Add configurable token and port.
 - Improve connection states such as `waiting_for_cs2`, `token_invalid`, and `port_in_use`.
-- Add a license file.
 - Complete real CS2 testing.
 - Tag the first release as `v0.1.0`.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
