@@ -189,7 +189,7 @@ The plugin listens only on `127.0.0.1` and receives local CS2 Game State Integra
 
 The icon is an original radar/HUD-style design. It does not use Counter-Strike, Valve, or Macro Deck logo assets.
 
-The `GSI` lettering uses Oxanium, released under the SIL Open Font License.
+The `GSI` lettering uses Oxanium, released under the SIL Open Font License. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Roadmap Before Store Submission
 
