@@ -11,7 +11,7 @@ This project is in early development. It currently builds and loads locally in M
 Current known blockers before store submission:
 
 - The local build emits warning `MSB3277` for `WindowsBase` because the project references the installed `Macro Deck 2.dll` directly.
-- An extension icon and final release documentation still need to be completed.
+- Final release documentation still needs to be completed.
 
 ## Requirements
 
@@ -185,9 +185,14 @@ Macro Deck update check returns 404 for this plugin:
 
 The plugin listens only on `127.0.0.1` and receives local CS2 Game State Integration payloads. It does not send CS2 data to an external service.
 
+## Icon
+
+The icon is an original radar/HUD-style design. It does not use Counter-Strike, Valve, or Macro Deck logo assets.
+
+The `GSI` lettering uses Oxanium, released under the SIL Open Font License.
+
 ## Roadmap Before Store Submission
 
-- Add `Plugin.png` and `ExtensionIcon.png`.
 - Add configurable token and port.
 - Improve connection states such as `waiting_for_cs2`, `token_invalid`, and `port_in_use`.
 - Complete real CS2 testing.

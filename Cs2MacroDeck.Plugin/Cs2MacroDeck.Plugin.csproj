@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <None Include="ExtensionManifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Plugin.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\ExtensionIcon.png" Link="ExtensionIcon.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
