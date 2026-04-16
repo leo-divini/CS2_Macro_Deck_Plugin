@@ -10,7 +10,6 @@ This project is in early development. It currently builds and loads locally in M
 
 Current known blockers before store submission:
 
-- The plugin output currently includes `Cs2Gsi.Core.dll`; Macro Deck Extension Store rules need to be checked or the Core code must be compiled into the plugin output without a separate dependency DLL.
 - The local build emits warning `MSB3277` for `WindowsBase` because the project references the installed `Macro Deck 2.dll` directly.
 - A plugin icon and final release documentation still need to be completed.
 
@@ -27,7 +26,7 @@ Current known blockers before store submission:
 - `Cs2MacroDeck.Plugin`: Macro Deck plugin.
 - `Cs2Gsi.Core`: CS2 GSI models, parser, defaults, and shared HTTP server.
 - `Cs2Gsi.Listener`: optional console/debug listener for development.
-- `tools/debug`: helper launch files for the debug listener.
+- `tools`: helper launch files for the debug listener.
 
 For normal use, run Macro Deck and let the plugin receive CS2 data directly. Do not run `Cs2Gsi.Listener` at the same time unless you are explicitly debugging, because both try to use port `3333`.
 
@@ -62,7 +61,7 @@ Cs2MacroDeck.Plugin.deps.json
 ExtensionManifest.json
 ```
 
-Current development builds may also contain `Cs2Gsi.Core.dll`. That must be resolved before store submission unless Macro Deck maintainers confirm it is acceptable.
+Current development builds compile the shared GSI code directly into `Cs2MacroDeck.Plugin.dll`, so the plugin output does not require `Cs2Gsi.Core.dll`.
 
 Restart Macro Deck after copying the files.
 
@@ -155,7 +154,7 @@ If the endpoint returns HTTP 200 but all values are empty or zero, the plugin is
 To run the optional console listener instead of the Macro Deck plugin:
 
 ```powershell
-tools\debug\run-listener.cmd
+tools\run-listener.cmd
 ```
 
 Close Macro Deck first, or free port `3333`, before running the debug listener.
@@ -188,7 +187,6 @@ The plugin listens only on `127.0.0.1` and receives local CS2 Game State Integra
 
 ## Roadmap Before Store Submission
 
-- Remove or avoid the separate `Cs2Gsi.Core.dll` plugin dependency.
 - Add `Plugin.png` and `ExtensionIcon.png`.
 - Add configurable token and port.
 - Improve connection states such as `waiting_for_cs2`, `token_invalid`, and `port_in_use`.

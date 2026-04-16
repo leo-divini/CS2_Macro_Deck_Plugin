@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cs2Gsi.Core\Cs2Gsi.Core.csproj" />
+    <Compile Include="..\Cs2Gsi.Core\Config\**\*.cs" LinkBase="Cs2Gsi.Core\Config" />
+    <Compile Include="..\Cs2Gsi.Core\Http\**\*.cs" LinkBase="Cs2Gsi.Core\Http" />
+    <Compile Include="..\Cs2Gsi.Core\Models\**\*.cs" LinkBase="Cs2Gsi.Core\Models" />
+    <Compile Include="..\Cs2Gsi.Core\Parsing\**\*.cs" LinkBase="Cs2Gsi.Core\Parsing" />
     <Reference Include="Macro Deck 2">
       <HintPath>C:\Program Files\Macro Deck\Macro Deck 2.dll</HintPath>
       <Private>false</Private>
