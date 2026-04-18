@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -32,6 +33,8 @@ public sealed class GsiHttpServer : IDisposable
     public string Prefix { get; }
 
     public Action<GameState>? StateReceived { get; set; }
+
+    public Action? InvalidTokenReceived { get; set; }
 
     public Action<Exception>? RequestFailed { get; set; }
 
@@ -124,6 +127,7 @@ public sealed class GsiHttpServer : IDisposable
 
         if (incomingState.AuthToken != token)
         {
+            InvalidTokenReceived?.Invoke();
             context.Response.StatusCode = 403;
             return;
         }

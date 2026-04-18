@@ -9,7 +9,8 @@ public sealed class Cs2MacroDeckPlugin : MacroDeckPlugin
     {
         Actions = new List<PluginAction>
         {
-            new RefreshCs2StateAction()
+            new RefreshCs2StateAction(),
+            new ResetCs2ListenerAction()
         };
     }
 

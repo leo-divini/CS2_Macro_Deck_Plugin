@@ -34,6 +34,14 @@ internal static class Cs2GsiPluginServer
                         Cs2StateVariablePublisher.PublishConnected(currentPlugin, state);
                     }
                 },
+                InvalidTokenReceived = () =>
+                {
+                    var currentPlugin = plugin;
+                    if (currentPlugin is not null)
+                    {
+                        Cs2StateVariablePublisher.PublishTokenInvalid(currentPlugin);
+                    }
+                },
                 RequestFailed = ex => MacroDeckLogger.Error(macroDeckPlugin, $"CS2 GSI request failed: {ex.Message}")
             };
 
@@ -41,16 +49,40 @@ internal static class Cs2GsiPluginServer
             {
                 gsiServer.Start();
                 server = gsiServer;
+                Cs2StateVariablePublisher.PublishWaitingForCs2(macroDeckPlugin);
                 MacroDeckLogger.Info(macroDeckPlugin, $"CS2 GSI server listening on {gsiServer.Prefix}");
                 return true;
             }
             catch (HttpListenerException ex)
             {
                 gsiServer.Dispose();
+                Cs2StateVariablePublisher.PublishPortInUse(macroDeckPlugin);
                 MacroDeckLogger.Warning(
                     macroDeckPlugin,
                     $"Could not start CS2 GSI server on {gsiServer.Prefix}: {ex.Message}. Falling back to /state polling.");
                 return false;
+            }
+        }
+    }
+
+    public static void Reset()
+    {
+        lock (SyncRoot)
+        {
+            var currentPlugin = plugin;
+            if (currentPlugin is null)
+            {
+                return;
+            }
+
+            server?.Dispose();
+            server = null;
+            Cs2StateVariablePublisher.StopPolling();
+            Cs2StateVariablePublisher.PublishOffline(currentPlugin, "restarting");
+
+            if (!Start(currentPlugin))
+            {
+                Cs2StateVariablePublisher.StartPolling(currentPlugin);
             }
         }
     }
