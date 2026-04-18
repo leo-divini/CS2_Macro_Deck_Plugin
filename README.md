@@ -115,63 +115,63 @@ The plugin publishes these Macro Deck variables:
 
 Macro Deck label placeholders usually use underscores instead of dots. For example, the plugin variable `cs2md.player.hp` is used in button text as `{cs2md_player_hp}`.
 
-| Variable | Button placeholder | Type | Meaning |
+| Variable / button text | Type | Meaning | Example |
 | --- | --- | --- | --- |
-| `cs2md.connected` | `{cs2md_connected}` | Bool | `true` only after a real CS2 GSI payload has been received. |
-| `cs2md.status` | `{cs2md_status}` | String | Plugin connection status. See the status values below. |
-| `cs2md.provider.name` | `{cs2md_provider_name}` | String | GSI provider name from CS2. |
-| `cs2md.provider.appid` | `{cs2md_provider_appid}` | Integer | Steam app id, normally `730`. |
-| `cs2md.provider.version` | `{cs2md_provider_version}` | Integer | CS2 provider version number. |
-| `cs2md.provider.steamid` | `{cs2md_provider_steamid}` | String | Steam ID reported by the provider block. |
-| `cs2md.provider.timestamp` | `{cs2md_provider_timestamp}` | Integer | Provider timestamp from the GSI payload. |
-| `cs2md.map.name` | `{cs2md_map_name}` | String | Current map name, for example `de_mirage`. |
-| `cs2md.map.mode` | `{cs2md_map_mode}` | String | Current game mode, for example `competitive` or `casual`. |
-| `cs2md.map.phase` | `{cs2md_map_phase}` | String | Current map phase, for example `live`. |
-| `cs2md.map.round` | `{cs2md_map_round}` | Integer | Current map round number. |
-| `cs2md.map.num_matches_to_win_series` | `{cs2md_map_num_matches_to_win_series}` | Integer | Number of matches needed to win the current series, when CS2 reports it. |
-| `cs2md.map.ct.consecutive_round_losses` | `{cs2md_map_ct_consecutive_round_losses}` | Integer | CT consecutive round losses. |
-| `cs2md.map.ct.timeouts_remaining` | `{cs2md_map_ct_timeouts_remaining}` | Integer | CT tactical timeouts remaining. |
-| `cs2md.map.ct.matches_won_this_series` | `{cs2md_map_ct_matches_won_this_series}` | Integer | CT matches won in the current series. |
-| `cs2md.map.t.consecutive_round_losses` | `{cs2md_map_t_consecutive_round_losses}` | Integer | T consecutive round losses. |
-| `cs2md.map.t.timeouts_remaining` | `{cs2md_map_t_timeouts_remaining}` | Integer | T tactical timeouts remaining. |
-| `cs2md.map.t.matches_won_this_series` | `{cs2md_map_t_matches_won_this_series}` | Integer | T matches won in the current series. |
-| `cs2md.round.phase` | `{cs2md_round_phase}` | String | Current round phase, for example `freezetime`, `live`, or `over`. |
-| `cs2md.round.wins_ct` | `{cs2md_round_wins_ct}` | Integer | CT score. |
-| `cs2md.round.wins_t` | `{cs2md_round_wins_t}` | Integer | T score. |
-| `cs2md.player.steamid` | `{cs2md_player_steamid}` | String | Player Steam ID. |
-| `cs2md.player.name` | `{cs2md_player_name}` | String | Player name. |
-| `cs2md.player.observer_slot` | `{cs2md_player_observer_slot}` | Integer | Player observer slot. |
-| `cs2md.player.activity` | `{cs2md_player_activity}` | String | Player activity, for example `playing`. |
-| `cs2md.player.hp` | `{cs2md_player_hp}` | Integer | Player health. |
-| `cs2md.player.armor` | `{cs2md_player_armor}` | Integer | Player armor. |
-| `cs2md.player.helmet` | `{cs2md_player_helmet}` | Bool | Whether the player has a helmet. |
-| `cs2md.player.defusekit` | `{cs2md_player_defusekit}` | Bool | Whether the player has a defuse kit. |
-| `cs2md.player.flashed` | `{cs2md_player_flashed}` | Integer | Flash effect value reported by CS2. |
-| `cs2md.player.smoked` | `{cs2md_player_smoked}` | Integer | Smoke effect value reported by CS2. |
-| `cs2md.player.burning` | `{cs2md_player_burning}` | Integer | Burning effect value reported by CS2. |
-| `cs2md.player.alive` | `{cs2md_player_alive}` | Bool | Whether player health is above zero. |
-| `cs2md.player.money` | `{cs2md_player_money}` | Integer | Player money. |
-| `cs2md.player.team` | `{cs2md_player_team}` | String | Player team, usually `CT` or `T`. |
-| `cs2md.player.kills_round` | `{cs2md_player_kills_round}` | Integer | Kills in the current round. |
-| `cs2md.player.headshot_kills_round` | `{cs2md_player_headshot_kills_round}` | Integer | Headshot kills in the current round. |
-| `cs2md.player.kills_total` | `{cs2md_player_kills_total}` | Integer | Match kills. |
-| `cs2md.player.assists` | `{cs2md_player_assists}` | Integer | Match assists. |
-| `cs2md.player.deaths` | `{cs2md_player_deaths}` | Integer | Match deaths. |
-| `cs2md.player.mvps` | `{cs2md_player_mvps}` | Integer | Match MVP count. |
-| `cs2md.player.score` | `{cs2md_player_score}` | Integer | Match score. |
-| `cs2md.player.equip_value` | `{cs2md_player_equip_value}` | Integer | Current equipment value. |
-| `cs2md.weapon.name` | `{cs2md_weapon_name}` | String | Current weapon name, including while reloading. |
-| `cs2md.weapon.type` | `{cs2md_weapon_type}` | String | Current weapon type. |
-| `cs2md.weapon.paintkit` | `{cs2md_weapon_paintkit}` | String | Current weapon paint kit reported by CS2. |
-| `cs2md.weapon.state` | `{cs2md_weapon_state}` | String | Current weapon state, for example `active` or `reloading`. |
-| `cs2md.weapon.ammo_clip` | `{cs2md_weapon_ammo_clip}` | Integer | Ammo in the current weapon clip. |
-| `cs2md.weapon.ammo_clip_max` | `{cs2md_weapon_ammo_clip_max}` | Integer | Maximum clip size for the current weapon. |
-| `cs2md.weapon.ammo_reserve` | `{cs2md_weapon_ammo_reserve}` | Integer | Reserve ammo value reported by CS2. |
-| `cs2md.bomb.state` | `{cs2md_bomb_state}` | String | Bomb state from CS2 GSI, for example `planted` or `defused`. |
-| `cs2md.bomb.site` | `{cs2md_bomb_site}` | String | Compatibility alias for bomb position. |
-| `cs2md.bomb.position` | `{cs2md_bomb_position}` | String | Raw bomb coordinate string from CS2 GSI, when CS2 sends the `bomb` block. |
-| `cs2md.bomb.timer` | `{cs2md_bomb_timer}` | String | Bomb countdown when available or locally estimated after plant. |
-| `cs2md.bomb.carrier` | `{cs2md_bomb_carrier}` | String | Bomb carrier/player field when CS2 sends it. |
+| `cs2md.connected`<br>(`{cs2md_connected}`) | Bool | `true` only after a real CS2 GSI payload has been received. | `true` |
+| `cs2md.status`<br>(`{cs2md_status}`) | String | Plugin connection status. See the status values below. | `connected` |
+| `cs2md.provider.name`<br>(`{cs2md_provider_name}`) | String | GSI provider name from CS2. | `Counter-Strike: Global Offensive` |
+| `cs2md.provider.appid`<br>(`{cs2md_provider_appid}`) | Integer | Steam app id, normally `730`. | `730` |
+| `cs2md.provider.version`<br>(`{cs2md_provider_version}`) | Integer | CS2 provider version number. | `14141` |
+| `cs2md.provider.steamid`<br>(`{cs2md_provider_steamid}`) | String | Steam ID reported by the provider block. | `7656119...` |
+| `cs2md.provider.timestamp`<br>(`{cs2md_provider_timestamp}`) | Integer | Provider timestamp from the GSI payload. | `1776524798` |
+| `cs2md.map.name`<br>(`{cs2md_map_name}`) | String | Current map name. | `de_mirage` |
+| `cs2md.map.mode`<br>(`{cs2md_map_mode}`) | String | Current game mode. | `casual` |
+| `cs2md.map.phase`<br>(`{cs2md_map_phase}`) | String | Current map phase. | `live` |
+| `cs2md.map.round`<br>(`{cs2md_map_round}`) | Integer | Current map round number. | `8` |
+| `cs2md.map.num_matches_to_win_series`<br>(`{cs2md_map_num_matches_to_win_series}`) | Integer | Number of matches needed to win the current series, when CS2 reports it. | `0` |
+| `cs2md.map.ct.consecutive_round_losses`<br>(`{cs2md_map_ct_consecutive_round_losses}`) | Integer | CT consecutive round losses. | `1` |
+| `cs2md.map.ct.timeouts_remaining`<br>(`{cs2md_map_ct_timeouts_remaining}`) | Integer | CT tactical timeouts remaining. | `1` |
+| `cs2md.map.ct.matches_won_this_series`<br>(`{cs2md_map_ct_matches_won_this_series}`) | Integer | CT matches won in the current series. | `0` |
+| `cs2md.map.t.consecutive_round_losses`<br>(`{cs2md_map_t_consecutive_round_losses}`) | Integer | T consecutive round losses. | `0` |
+| `cs2md.map.t.timeouts_remaining`<br>(`{cs2md_map_t_timeouts_remaining}`) | Integer | T tactical timeouts remaining. | `1` |
+| `cs2md.map.t.matches_won_this_series`<br>(`{cs2md_map_t_matches_won_this_series}`) | Integer | T matches won in the current series. | `0` |
+| `cs2md.round.phase`<br>(`{cs2md_round_phase}`) | String | Current round phase. | `freezetime` |
+| `cs2md.round.wins_ct`<br>(`{cs2md_round_wins_ct}`) | Integer | CT score. | `2` |
+| `cs2md.round.wins_t`<br>(`{cs2md_round_wins_t}`) | Integer | T score. | `5` |
+| `cs2md.player.steamid`<br>(`{cs2md_player_steamid}`) | String | Player Steam ID. | `7656119...` |
+| `cs2md.player.name`<br>(`{cs2md_player_name}`) | String | Player name. | `LeoMos` |
+| `cs2md.player.observer_slot`<br>(`{cs2md_player_observer_slot}`) | Integer | Player observer slot. | `1` |
+| `cs2md.player.activity`<br>(`{cs2md_player_activity}`) | String | Player activity. | `playing` |
+| `cs2md.player.hp`<br>(`{cs2md_player_hp}`) | Integer | Player health. | `100` |
+| `cs2md.player.armor`<br>(`{cs2md_player_armor}`) | Integer | Player armor. | `97` |
+| `cs2md.player.helmet`<br>(`{cs2md_player_helmet}`) | Bool | Whether the player has a helmet. | `true` |
+| `cs2md.player.defusekit`<br>(`{cs2md_player_defusekit}`) | Bool | Whether the player has a defuse kit. | `true` |
+| `cs2md.player.flashed`<br>(`{cs2md_player_flashed}`) | Integer | Flash effect value reported by CS2. | `0` |
+| `cs2md.player.smoked`<br>(`{cs2md_player_smoked}`) | Integer | Smoke effect value reported by CS2. | `0` |
+| `cs2md.player.burning`<br>(`{cs2md_player_burning}`) | Integer | Burning effect value reported by CS2. | `0` |
+| `cs2md.player.alive`<br>(`{cs2md_player_alive}`) | Bool | Whether player health is above zero. | `true` |
+| `cs2md.player.money`<br>(`{cs2md_player_money}`) | Integer | Player money. | `3050` |
+| `cs2md.player.team`<br>(`{cs2md_player_team}`) | String | Player team, usually `CT` or `T`. | `T` |
+| `cs2md.player.kills_round`<br>(`{cs2md_player_kills_round}`) | Integer | Kills in the current round. | `1` |
+| `cs2md.player.headshot_kills_round`<br>(`{cs2md_player_headshot_kills_round}`) | Integer | Headshot kills in the current round. | `0` |
+| `cs2md.player.kills_total`<br>(`{cs2md_player_kills_total}`) | Integer | Match kills. | `5` |
+| `cs2md.player.assists`<br>(`{cs2md_player_assists}`) | Integer | Match assists. | `0` |
+| `cs2md.player.deaths`<br>(`{cs2md_player_deaths}`) | Integer | Match deaths. | `1` |
+| `cs2md.player.mvps`<br>(`{cs2md_player_mvps}`) | Integer | Match MVP count. | `0` |
+| `cs2md.player.score`<br>(`{cs2md_player_score}`) | Integer | Match score. | `7` |
+| `cs2md.player.equip_value`<br>(`{cs2md_player_equip_value}`) | Integer | Current equipment value. | `4100` |
+| `cs2md.weapon.name`<br>(`{cs2md_weapon_name}`) | String | Current weapon name, including while reloading. | `weapon_galilar` |
+| `cs2md.weapon.type`<br>(`{cs2md_weapon_type}`) | String | Current weapon type. | `Rifle` |
+| `cs2md.weapon.paintkit`<br>(`{cs2md_weapon_paintkit}`) | String | Current weapon paint kit reported by CS2. | `default` |
+| `cs2md.weapon.state`<br>(`{cs2md_weapon_state}`) | String | Current weapon state. | `active` / `reloading` |
+| `cs2md.weapon.ammo_clip`<br>(`{cs2md_weapon_ammo_clip}`) | Integer | Ammo in the current weapon clip. | `24` |
+| `cs2md.weapon.ammo_clip_max`<br>(`{cs2md_weapon_ammo_clip_max}`) | Integer | Maximum clip size for the current weapon. | `35` |
+| `cs2md.weapon.ammo_reserve`<br>(`{cs2md_weapon_ammo_reserve}`) | Integer | Reserve ammo value reported by CS2. | `4` |
+| `cs2md.bomb.state`<br>(`{cs2md_bomb_state}`) | String | Bomb state from CS2 GSI. | `planted` |
+| `cs2md.bomb.site`<br>(`{cs2md_bomb_site}`) | String | Compatibility alias for bomb position. | `1210.5, -842.25, 64.0` |
+| `cs2md.bomb.position`<br>(`{cs2md_bomb_position}`) | String | Raw bomb coordinate string from CS2 GSI, when CS2 sends the `bomb` block. | `1210.5, -842.25, 64.0` |
+| `cs2md.bomb.timer`<br>(`{cs2md_bomb_timer}`) | String | Bomb countdown when available or locally estimated after plant. | `14s` |
+| `cs2md.bomb.carrier`<br>(`{cs2md_bomb_carrier}`) | String | Bomb carrier/player field when CS2 sends it. | `7656119...` |
 
 `cs2md.bomb.position`, `cs2md.bomb.site`, and `cs2md.bomb.carrier` depend on CS2 sending the `bomb` payload block. Valve documents that bomb position data is observer/spectator-only, so these values are often empty during normal player gameplay. `cs2md.bomb.site` is kept as a compatibility alias for now; automatic A/B site detection is not implemented yet.
 
