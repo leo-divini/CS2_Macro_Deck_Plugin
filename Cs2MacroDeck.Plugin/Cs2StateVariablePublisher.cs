@@ -291,8 +291,19 @@ internal static class Cs2StateVariablePublisher
         {
             if (!Cs2PluginSettingsStore.IsVariableEnabled(definition))
             {
-                VariableManager.DeleteVariable(definition.Name);
+                DeleteVariable(definition.Name);
             }
+        }
+    }
+
+    private static void DeleteVariable(string name)
+    {
+        VariableManager.DeleteVariable(name);
+
+        var convertedName = VariableManager.ConvertNameString(name);
+        if (!string.Equals(name, convertedName, StringComparison.Ordinal))
+        {
+            VariableManager.DeleteVariable(convertedName);
         }
     }
 
