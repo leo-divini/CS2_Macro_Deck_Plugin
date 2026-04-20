@@ -24,7 +24,6 @@ This project is in early development. It builds, loads locally in Macro Deck, an
 
 Known pre-release work:
 
-- Decide whether token and port should stay hardcoded for `0.1.0` or become configurable.
 - Add final screenshots/GIFs.
 - Do final clean build and release tag.
 - Submit to the Macro Deck Extension Store.
@@ -149,6 +148,43 @@ Useful Macro Deck status values:
 | `listener_offline` | The plugin is polling `/state`, but no listener is reachable. |
 | `restarting` | The reset action is restarting the listener. |
 | `error` | An unexpected error occurred while publishing state. |
+
+## Plugin Settings
+
+Open the plugin settings from Macro Deck to choose which variables are exposed.
+
+The settings window includes:
+
+- Listener token
+- Listener port
+- Variable categories and groups
+- A button to copy a CS2 GSI config using the current token and port
+
+`Connection / Status` variables are always enabled:
+
+```text
+cs2md.connected
+cs2md.status
+```
+
+Default enabled groups:
+
+- `Info`: provider, map, round, connection/status
+- `Player`: identity, status, health, economy, match stats, active weapon
+- `Bomb`: basic bomb state and timer
+
+Default disabled groups:
+
+- `Info`: phase countdowns, map round wins
+- `Player`: position, full weapon inventory slots
+- `Bomb`: position and carrier
+- `Other Players`: all observer player slots and their weapons
+- `Grenades`: grenade slots
+- `Raw / Debug`: raw JSON variables
+
+When a variable is disabled, the plugin removes it from Macro Deck's variable list instead of only stopping updates. Existing button placeholders that reference disabled variables will not receive values until those variables are enabled again.
+
+Changing the listener token or port restarts the local listener after saving settings. If you change either value, update the CS2 `gamestate_integration_cs2md.cfg` file and restart CS2.
 
 ## Setup - Advanced
 
@@ -590,7 +626,6 @@ For normal use, run Macro Deck and let the plugin receive CS2 data directly. Do 
 
 ## Roadmap Before Store Submission
 
-- Add configurable token and port, or explicitly freeze the defaults for `0.1.0`.
 - Add final Macro Deck screenshots/GIFs.
 - Tag the first release as `v0.1.0`.
 - Submit to the Macro Deck Extension Store.

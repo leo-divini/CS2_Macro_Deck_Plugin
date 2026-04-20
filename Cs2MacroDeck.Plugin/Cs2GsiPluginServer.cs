@@ -24,7 +24,8 @@ internal static class Cs2GsiPluginServer
                 return true;
             }
 
-            var gsiServer = new GsiHttpServer(GsiDefaults.AuthToken, GsiDefaults.Port)
+            var settings = Cs2PluginSettingsStore.Current;
+            var gsiServer = new GsiHttpServer(settings.AuthToken, settings.Port)
             {
                 StateReceived = state =>
                 {

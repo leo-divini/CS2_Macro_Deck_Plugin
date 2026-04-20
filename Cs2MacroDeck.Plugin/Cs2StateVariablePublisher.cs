@@ -15,7 +15,6 @@ internal static class Cs2StateVariablePublisher
     private const int AllPlayerSlots = 10;
     private const int GrenadeSlots = 16;
 
-    private static readonly Uri StateUri = new(new Uri(GsiDefaults.Prefix()), GsiDefaults.StatePath);
     private static readonly HttpClient HttpClient = new()
     {
         Timeout = TimeSpan.FromSeconds(2)
@@ -32,7 +31,19 @@ internal static class Cs2StateVariablePublisher
         lock (SyncRoot)
         {
             plugin = macroDeckPlugin;
+            Cs2PluginSettingsStore.Load(macroDeckPlugin);
             EnsureVariables(macroDeckPlugin);
+            DeleteDisabledVariables();
+        }
+    }
+
+    public static void ApplySettings(MacroDeckPlugin macroDeckPlugin)
+    {
+        lock (SyncRoot)
+        {
+            plugin = macroDeckPlugin;
+            EnsureVariables(macroDeckPlugin);
+            DeleteDisabledVariables();
         }
     }
 
@@ -134,7 +145,8 @@ internal static class Cs2StateVariablePublisher
     {
         try
         {
-            var state = await HttpClient.GetFromJsonAsync<GameState>(StateUri, cancellationToken)
+            var stateUri = CreateStateUri();
+            var state = await HttpClient.GetFromJsonAsync<GameState>(stateUri, cancellationToken)
                 .ConfigureAwait(false);
 
             if (state is null)
@@ -159,7 +171,7 @@ internal static class Cs2StateVariablePublisher
 
             if (!loggedConnectionError)
             {
-                MacroDeckLogger.Warning(currentPlugin, $"CS2 listener not reachable at {StateUri}.");
+                MacroDeckLogger.Warning(currentPlugin, $"CS2 listener not reachable at {CreateStateUri()}.");
                 loggedConnectionError = true;
             }
         }
@@ -173,6 +185,12 @@ internal static class Cs2StateVariablePublisher
     private static string EmptyStateStatus()
     {
         return pollingStartedBecausePortInUse ? "port_in_use" : "waiting_for_cs2";
+    }
+
+    private static Uri CreateStateUri()
+    {
+        var settings = Cs2PluginSettingsStore.Current;
+        return new Uri(new Uri(GsiDefaults.Prefix(settings.Port)), GsiDefaults.StatePath);
     }
 
     private static void EnsureVariables(MacroDeckPlugin currentPlugin)
@@ -264,6 +282,17 @@ internal static class Cs2StateVariablePublisher
         for (var slot = 1; slot <= GrenadeSlots; slot++)
         {
             EnsureGrenadeVariables(currentPlugin, $"cs2md.g{Slot(slot)}");
+        }
+    }
+
+    private static void DeleteDisabledVariables()
+    {
+        foreach (var definition in Cs2VariableCatalog.Definitions)
+        {
+            if (!Cs2PluginSettingsStore.IsVariableEnabled(definition))
+            {
+                VariableManager.DeleteVariable(definition.Name);
+            }
         }
     }
 
@@ -501,6 +530,11 @@ internal static class Cs2StateVariablePublisher
         object value,
         VariableType type)
     {
+        if (!Cs2PluginSettingsStore.IsVariableEnabled(name))
+        {
+            return;
+        }
+
         VariableManager.SetValue(name, value, type, currentPlugin, Array.Empty<string>());
     }
 }
