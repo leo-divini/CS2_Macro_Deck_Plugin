@@ -86,9 +86,9 @@ internal sealed class Cs2PluginSettingsForm : Form
             WrapContents = true,
             Padding = new Padding(0, 8, 0, 8)
         };
-        toolbar.Controls.Add(CreateButton("Base defaults", (_, _) => ApplyDefaultVariables()));
-        toolbar.Controls.Add(CreateButton("Enable all", (_, _) => SetAllVariables(true)));
-        toolbar.Controls.Add(CreateButton("Disable all optional", (_, _) => SetAllVariables(false)));
+        toolbar.Controls.Add(CreateButton("Base defaults", (_, _) => ApplyBaseDefaults()));
+        toolbar.Controls.Add(CreateButton("Enable all", (_, _) => SetOptionalVariablesEnabled(true)));
+        toolbar.Controls.Add(CreateButton("Disable all optional", (_, _) => SetOptionalVariablesEnabled(false)));
         toolbar.Controls.Add(CreateButton("Expand all", (_, _) => variablesTree.ExpandAll()));
         toolbar.Controls.Add(CreateButton("Collapse all", (_, _) => variablesTree.CollapseAll()));
         toolbar.Controls.Add(CreateButton("Copy CS2 config", (_, _) => CopyCs2Config()));
@@ -227,7 +227,7 @@ internal sealed class Cs2PluginSettingsForm : Form
         }
     }
 
-    private void ApplyDefaultVariables()
+    private void ApplyBaseDefaults()
     {
         UpdatedSettings.Categories.Clear();
         UpdatedSettings.Groups.Clear();
@@ -235,7 +235,7 @@ internal sealed class Cs2PluginSettingsForm : Form
         BuildTree();
     }
 
-    private void SetAllVariables(bool enabled)
+    private void SetOptionalVariablesEnabled(bool enabled)
     {
         UpdatedSettings.Categories.Clear();
         UpdatedSettings.Groups.Clear();

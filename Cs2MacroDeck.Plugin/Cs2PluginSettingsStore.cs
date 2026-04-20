@@ -23,7 +23,7 @@ internal static class Cs2PluginSettingsStore
         {
             lock (SyncRoot)
             {
-                return current;
+                return current.Clone();
             }
         }
     }
@@ -38,7 +38,7 @@ internal static class Cs2PluginSettingsStore
                 if (!string.IsNullOrWhiteSpace(json))
                 {
                     current = Normalize(JsonSerializer.Deserialize<Cs2PluginSettings>(json) ?? CreateDefault());
-                    return current;
+                    return current.Clone();
                 }
             }
             catch (Exception ex)
@@ -47,7 +47,7 @@ internal static class Cs2PluginSettingsStore
             }
 
             current = CreateDefault();
-            return current;
+            return current.Clone();
         }
     }
 
@@ -57,7 +57,7 @@ internal static class Cs2PluginSettingsStore
         {
             var previousToken = current.AuthToken;
             var previousPort = current.Port;
-            current = Normalize(settings);
+            current = Normalize(settings.Clone());
             PluginConfiguration.SetValue(plugin, SettingsKey, JsonSerializer.Serialize(current, JsonOptions));
             return !string.Equals(previousToken, current.AuthToken, StringComparison.Ordinal) ||
                 previousPort != current.Port;

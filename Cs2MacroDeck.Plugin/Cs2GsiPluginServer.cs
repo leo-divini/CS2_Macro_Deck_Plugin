@@ -1,5 +1,4 @@
 using System.Net;
-using Cs2Gsi.Core.Config;
 using Cs2Gsi.Core.Http;
 using SuchByte.MacroDeck.Logging;
 using SuchByte.MacroDeck.Plugins;
