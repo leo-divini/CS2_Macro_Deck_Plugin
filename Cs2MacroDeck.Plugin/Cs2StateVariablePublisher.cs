@@ -10,6 +10,11 @@ namespace Cs2MacroDeck.Plugin;
 
 internal static class Cs2StateVariablePublisher
 {
+    private const int MapRoundWinsSlots = 30;
+    private const int PlayerWeaponSlots = 8;
+    private const int AllPlayerSlots = 10;
+    private const int GrenadeSlots = 16;
+
     private static readonly Uri StateUri = new(new Uri(GsiDefaults.Prefix()), GsiDefaults.StatePath);
     private static readonly HttpClient HttpClient = new()
     {
@@ -190,9 +195,20 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.map.t.consecutive_round_losses", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.map.t.timeouts_remaining", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.map.t.matches_won_this_series", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.rw.count", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.rw.history", "", VariableType.String);
+        Set(currentPlugin, "cs2md.rw.raw_json", "", VariableType.String);
+        for (var slot = 1; slot <= MapRoundWinsSlots; slot++)
+        {
+            Set(currentPlugin, $"cs2md.rw.{Slot(slot)}", "", VariableType.String);
+        }
+
         Set(currentPlugin, "cs2md.round.phase", "", VariableType.String);
+        Set(currentPlugin, "cs2md.round.win_team", "", VariableType.String);
         Set(currentPlugin, "cs2md.round.wins_ct", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.round.wins_t", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.phase_countdowns.phase", "", VariableType.String);
+        Set(currentPlugin, "cs2md.phase_countdowns.ends_in", "", VariableType.String);
         Set(currentPlugin, "cs2md.player.steamid", "", VariableType.String);
         Set(currentPlugin, "cs2md.player.name", "", VariableType.String);
         Set(currentPlugin, "cs2md.player.observer_slot", 0, VariableType.Integer);
@@ -215,6 +231,15 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.player.mvps", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.player.score", 0, VariableType.Integer);
         Set(currentPlugin, "cs2md.player.equip_value", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.player.position", "", VariableType.String);
+        Set(currentPlugin, "cs2md.player.forward", "", VariableType.String);
+        Set(currentPlugin, "cs2md.pw.count", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.pw.raw_json", "", VariableType.String);
+        for (var slot = 1; slot <= PlayerWeaponSlots; slot++)
+        {
+            EnsureWeaponVariables(currentPlugin, $"cs2md.pw{Slot(slot)}");
+        }
+
         Set(currentPlugin, "cs2md.weapon.name", "", VariableType.String);
         Set(currentPlugin, "cs2md.weapon.type", "", VariableType.String);
         Set(currentPlugin, "cs2md.weapon.paintkit", "", VariableType.String);
@@ -227,6 +252,19 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.bomb.position", "", VariableType.String);
         Set(currentPlugin, "cs2md.bomb.timer", "", VariableType.String);
         Set(currentPlugin, "cs2md.bomb.carrier", "", VariableType.String);
+        Set(currentPlugin, "cs2md.ap.count", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.ap.raw_json", "", VariableType.String);
+        for (var slot = 1; slot <= AllPlayerSlots; slot++)
+        {
+            EnsurePlayerSlotVariables(currentPlugin, $"cs2md.ap{Slot(slot)}");
+        }
+
+        Set(currentPlugin, "cs2md.g.count", 0, VariableType.Integer);
+        Set(currentPlugin, "cs2md.g.raw_json", "", VariableType.String);
+        for (var slot = 1; slot <= GrenadeSlots; slot++)
+        {
+            EnsureGrenadeVariables(currentPlugin, $"cs2md.g{Slot(slot)}");
+        }
     }
 
     private static void PublishConnectionState(MacroDeckPlugin currentPlugin, bool connected, string status)
@@ -253,9 +291,13 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.map.t.consecutive_round_losses", state.Map.T.ConsecutiveRoundLosses, VariableType.Integer);
         Set(currentPlugin, "cs2md.map.t.timeouts_remaining", state.Map.T.TimeoutsRemaining, VariableType.Integer);
         Set(currentPlugin, "cs2md.map.t.matches_won_this_series", state.Map.T.MatchesWonThisSeries, VariableType.Integer);
+        PublishMapRoundWins(currentPlugin, state);
         Set(currentPlugin, "cs2md.round.phase", state.Round.Phase, VariableType.String);
+        Set(currentPlugin, "cs2md.round.win_team", state.Round.WinTeam, VariableType.String);
         Set(currentPlugin, "cs2md.round.wins_ct", state.Round.WinsCt, VariableType.Integer);
         Set(currentPlugin, "cs2md.round.wins_t", state.Round.WinsT, VariableType.Integer);
+        Set(currentPlugin, "cs2md.phase_countdowns.phase", state.PhaseCountdowns.Phase, VariableType.String);
+        Set(currentPlugin, "cs2md.phase_countdowns.ends_in", state.PhaseCountdowns.PhaseEndsIn, VariableType.String);
         Set(currentPlugin, "cs2md.player.steamid", state.Player.SteamId, VariableType.String);
         Set(currentPlugin, "cs2md.player.name", state.Player.Name, VariableType.String);
         Set(currentPlugin, "cs2md.player.observer_slot", state.Player.ObserverSlot, VariableType.Integer);
@@ -278,6 +320,11 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.player.mvps", state.Player.Mvps, VariableType.Integer);
         Set(currentPlugin, "cs2md.player.score", state.Player.Score, VariableType.Integer);
         Set(currentPlugin, "cs2md.player.equip_value", state.Player.EquipValue, VariableType.Integer);
+        Set(currentPlugin, "cs2md.player.position", state.Player.Position, VariableType.String);
+        Set(currentPlugin, "cs2md.player.forward", state.Player.Forward, VariableType.String);
+        Set(currentPlugin, "cs2md.pw.count", state.Player.Weapons.Count, VariableType.Integer);
+        Set(currentPlugin, "cs2md.pw.raw_json", state.Player.WeaponsRawJson, VariableType.String);
+        PublishWeaponSlots(currentPlugin, "cs2md.pw", state.Player.Weapons, PlayerWeaponSlots);
         Set(currentPlugin, "cs2md.weapon.name", state.Player.ActiveWeapon, VariableType.String);
         Set(currentPlugin, "cs2md.weapon.type", state.Player.WeaponType, VariableType.String);
         Set(currentPlugin, "cs2md.weapon.paintkit", state.Player.WeaponPaintKit, VariableType.String);
@@ -290,6 +337,162 @@ internal static class Cs2StateVariablePublisher
         Set(currentPlugin, "cs2md.bomb.position", state.Bomb.Position, VariableType.String);
         Set(currentPlugin, "cs2md.bomb.timer", state.Bomb.Timer, VariableType.String);
         Set(currentPlugin, "cs2md.bomb.carrier", state.Bomb.Carrier, VariableType.String);
+        PublishAllPlayers(currentPlugin, state);
+        PublishGrenades(currentPlugin, state);
+    }
+
+    private static void PublishMapRoundWins(MacroDeckPlugin currentPlugin, GameState state)
+    {
+        Set(currentPlugin, "cs2md.rw.count", state.MapRoundWins.Wins.Count, VariableType.Integer);
+        Set(currentPlugin, "cs2md.rw.history", state.MapRoundWins.History, VariableType.String);
+        Set(currentPlugin, "cs2md.rw.raw_json", state.MapRoundWins.RawJson, VariableType.String);
+
+        for (var slot = 1; slot <= MapRoundWinsSlots; slot++)
+        {
+            var value = slot <= state.MapRoundWins.Wins.Count ? state.MapRoundWins.Wins[slot - 1] : "";
+            Set(currentPlugin, $"cs2md.rw.{Slot(slot)}", value, VariableType.String);
+        }
+    }
+
+    private static void PublishAllPlayers(MacroDeckPlugin currentPlugin, GameState state)
+    {
+        Set(currentPlugin, "cs2md.ap.count", state.AllPlayers.Count, VariableType.Integer);
+        Set(currentPlugin, "cs2md.ap.raw_json", state.AllPlayersRawJson, VariableType.String);
+
+        for (var slot = 1; slot <= AllPlayerSlots; slot++)
+        {
+            var prefix = $"cs2md.ap{Slot(slot)}";
+            if (slot <= state.AllPlayers.Count)
+            {
+                PublishPlayerSlot(currentPlugin, prefix, state.AllPlayers[slot - 1]);
+            }
+            else
+            {
+                PublishPlayerSlot(currentPlugin, prefix, new PlayerState());
+            }
+        }
+    }
+
+    private static void PublishGrenades(MacroDeckPlugin currentPlugin, GameState state)
+    {
+        Set(currentPlugin, "cs2md.g.count", state.Grenades.Count, VariableType.Integer);
+        Set(currentPlugin, "cs2md.g.raw_json", state.GrenadesRawJson, VariableType.String);
+
+        for (var slot = 1; slot <= GrenadeSlots; slot++)
+        {
+            var prefix = $"cs2md.g{Slot(slot)}";
+            if (slot <= state.Grenades.Count)
+            {
+                PublishGrenade(currentPlugin, prefix, state.Grenades[slot - 1]);
+            }
+            else
+            {
+                PublishGrenade(currentPlugin, prefix, new GrenadeState());
+            }
+        }
+    }
+
+    private static void PublishPlayerSlot(MacroDeckPlugin currentPlugin, string prefix, PlayerState player)
+    {
+        Set(currentPlugin, $"{prefix}.steamid", player.SteamId, VariableType.String);
+        Set(currentPlugin, $"{prefix}.name", player.Name, VariableType.String);
+        Set(currentPlugin, $"{prefix}.slot", player.ObserverSlot, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.activity", player.Activity, VariableType.String);
+        Set(currentPlugin, $"{prefix}.team", player.Team, VariableType.String);
+        Set(currentPlugin, $"{prefix}.hp", player.Hp, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.armor", player.Armor, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.helmet", player.Helmet, VariableType.Bool);
+        Set(currentPlugin, $"{prefix}.defusekit", player.DefuseKit, VariableType.Bool);
+        Set(currentPlugin, $"{prefix}.flashed", player.Flashed, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.smoked", player.Smoked, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.burning", player.Burning, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.alive", player.Alive, VariableType.Bool);
+        Set(currentPlugin, $"{prefix}.money", player.Money, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.kr", player.KillsRound, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.hsr", player.HeadshotKillsRound, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.kt", player.KillsTotal, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.assists", player.Assists, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.deaths", player.Deaths, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.mvps", player.Mvps, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.score", player.Score, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.equip", player.EquipValue, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.pos", player.Position, VariableType.String);
+        Set(currentPlugin, $"{prefix}.forward", player.Forward, VariableType.String);
+        Set(currentPlugin, $"{prefix}.aw.name", player.ActiveWeapon, VariableType.String);
+        Set(currentPlugin, $"{prefix}.aw.type", player.WeaponType, VariableType.String);
+        Set(currentPlugin, $"{prefix}.aw.paint", player.WeaponPaintKit, VariableType.String);
+        Set(currentPlugin, $"{prefix}.aw.state", player.WeaponState, VariableType.String);
+        Set(currentPlugin, $"{prefix}.aw.ammo", player.AmmoClip, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.aw.ammo_max", player.AmmoClipMax, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.aw.reserve", player.AmmoReserve, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.w.count", player.Weapons.Count, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.w.raw_json", player.WeaponsRawJson, VariableType.String);
+        PublishWeaponSlots(currentPlugin, $"{prefix}.w", player.Weapons, PlayerWeaponSlots);
+    }
+
+    private static void PublishWeaponSlots(
+        MacroDeckPlugin currentPlugin,
+        string prefix,
+        IReadOnlyList<WeaponInfo> weapons,
+        int maxSlots)
+    {
+        for (var slot = 1; slot <= maxSlots; slot++)
+        {
+            var slotPrefix = $"{prefix}{Slot(slot)}";
+            if (slot <= weapons.Count)
+            {
+                PublishWeapon(currentPlugin, slotPrefix, weapons[slot - 1]);
+            }
+            else
+            {
+                PublishWeapon(currentPlugin, slotPrefix, new WeaponInfo());
+            }
+        }
+    }
+
+    private static void PublishWeapon(MacroDeckPlugin currentPlugin, string prefix, WeaponInfo weapon)
+    {
+        Set(currentPlugin, $"{prefix}.slot", weapon.Slot, VariableType.String);
+        Set(currentPlugin, $"{prefix}.name", weapon.Name, VariableType.String);
+        Set(currentPlugin, $"{prefix}.type", weapon.Type, VariableType.String);
+        Set(currentPlugin, $"{prefix}.paint", weapon.PaintKit, VariableType.String);
+        Set(currentPlugin, $"{prefix}.state", weapon.State, VariableType.String);
+        Set(currentPlugin, $"{prefix}.ammo", weapon.AmmoClip, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.ammo_max", weapon.AmmoClipMax, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.reserve", weapon.AmmoReserve, VariableType.Integer);
+    }
+
+    private static void PublishGrenade(MacroDeckPlugin currentPlugin, string prefix, GrenadeState grenade)
+    {
+        Set(currentPlugin, $"{prefix}.id", grenade.Id, VariableType.String);
+        Set(currentPlugin, $"{prefix}.owner", grenade.Owner, VariableType.String);
+        Set(currentPlugin, $"{prefix}.type", grenade.Type, VariableType.String);
+        Set(currentPlugin, $"{prefix}.pos", grenade.Position, VariableType.String);
+        Set(currentPlugin, $"{prefix}.vel", grenade.Velocity, VariableType.String);
+        Set(currentPlugin, $"{prefix}.life", grenade.Lifetime, VariableType.String);
+        Set(currentPlugin, $"{prefix}.effect", grenade.EffectTime, VariableType.String);
+        Set(currentPlugin, $"{prefix}.flames", grenade.FlamesCount, VariableType.Integer);
+        Set(currentPlugin, $"{prefix}.raw_json", grenade.RawJson, VariableType.String);
+    }
+
+    private static void EnsurePlayerSlotVariables(MacroDeckPlugin currentPlugin, string prefix)
+    {
+        PublishPlayerSlot(currentPlugin, prefix, new PlayerState());
+    }
+
+    private static void EnsureWeaponVariables(MacroDeckPlugin currentPlugin, string prefix)
+    {
+        PublishWeapon(currentPlugin, prefix, new WeaponInfo());
+    }
+
+    private static void EnsureGrenadeVariables(MacroDeckPlugin currentPlugin, string prefix)
+    {
+        PublishGrenade(currentPlugin, prefix, new GrenadeState());
+    }
+
+    private static string Slot(int slot)
+    {
+        return slot.ToString("00");
     }
 
     private static void Set(

@@ -1,16 +1,33 @@
 # CS2 GSI for Macro Deck
 
-CS2 GSI for Macro Deck is a Macro Deck 2 plugin for the Macro Deck Extension Store. It receives Counter-Strike 2 Game State Integration data locally and publishes it as Macro Deck variables.
+![CS2 GSI for Macro Deck icon](ExtensionIcon.png)
 
-The plugin listens on `http://127.0.0.1:3333/`, accepts CS2 GSI `POST` payloads, and exposes the latest parsed state at `http://127.0.0.1:3333/state` for local debugging.
+CS2 GSI for Macro Deck is a Macro Deck 2 plugin that receives Counter-Strike 2 Game State Integration payloads locally and publishes them as Macro Deck variables.
+
+It listens only on `http://127.0.0.1:3333/`. CS2 sends data to the plugin, and Macro Deck buttons can show values such as map, score, HP, armor, money, weapon, ammo, bomb state, all players, grenades, and observer-only data when CS2 provides it.
+
+Official Valve GSI documentation:
+
+https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_State_Integration
+
+## Screenshots
+
+Current screenshots to add before release:
+
+- `docs/images/macrodeck-dashboard-live.png` - Macro Deck dashboard during a live round.
+- `docs/images/macrodeck-dashboard-bomb.png` - Bomb planted / timer test.
+- `docs/images/macrodeck-dashboard-observer.png` - Observer/spectator test with `allplayers` data.
 
 ## Status
 
-This project is in early development. It currently builds and loads locally in Macro Deck, but it is not ready for Macro Deck Extension Store submission yet.
+This project is in early development. It builds, loads locally in Macro Deck, and has been tested with real CS2 payloads, but it still needs final release cleanup before Macro Deck Extension Store submission.
 
-Current known blockers before store submission:
+Known pre-release work:
 
-- Real CS2 match/training testing still needs to be completed.
+- Decide whether token and port should stay hardcoded for `0.1.0` or become configurable.
+- Add final screenshots/GIFs.
+- Do final clean build and release tag.
+- Submit to the Macro Deck Extension Store.
 
 ## Requirements
 
@@ -20,14 +37,140 @@ Current known blockers before store submission:
 - .NET SDK 9 or newer for development builds
 - Macro Deck installed at `C:\Program Files\Macro Deck\Macro Deck 2.dll` for local compilation
 
-## Projects
+## Setup - Beginner
 
-- `Cs2MacroDeck.Plugin`: Macro Deck plugin.
-- `Cs2Gsi.Core`: CS2 GSI models, parser, defaults, and shared HTTP server.
-- `Cs2Gsi.Listener`: optional console/debug listener for development.
-- `tools`: helper launch files for the debug listener.
+Use this if you only want it to work.
 
-For normal use, run Macro Deck and let the plugin receive CS2 data directly. Do not run `Cs2Gsi.Listener` at the same time unless you are explicitly debugging, because both try to use port `3333`.
+1. Install or copy the plugin into:
+
+```text
+%AppData%\Macro Deck\plugins\LeoM.Cs2Gsi
+```
+
+2. Create this file in the CS2 config folder:
+
+```text
+Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
+```
+
+3. Paste this config:
+
+```text
+"CS2 Macro Deck GSI"
+{
+    "uri"       "http://127.0.0.1:3333/"
+    "timeout"   "5.0"
+    "buffer"    "0.1"
+    "throttle"  "0.5"
+    "heartbeat" "10.0"
+    "auth"
+    {
+        "token" "cs2md_token_segreto"
+    }
+    "output"
+    {
+        "precision_time"     "3"
+        "precision_position" "1"
+        "precision_vector"   "3"
+    }
+    "data"
+    {
+        "provider"               "1"
+        "map"                    "1"
+        "map_round_wins"         "1"
+        "round"                  "1"
+        "player_id"              "1"
+        "player_state"           "1"
+        "player_weapons"         "1"
+        "player_match_stats"     "1"
+        "player_position"        "1"
+        "bomb"                   "1"
+        "phase_countdowns"       "1"
+        "allplayers_id"          "1"
+        "allplayers_state"       "1"
+        "allplayers_match_stats" "1"
+        "allplayers_weapons"     "1"
+        "allplayers_position"    "1"
+        "allgrenades"            "1"
+    }
+}
+```
+
+4. Restart CS2.
+5. Restart Macro Deck.
+6. Create a Macro Deck button and use a label like:
+
+```text
+{cs2md_map_name}
+{cs2md_round_phase}
+HP {cs2md_player_hp}
+{cs2md_weapon_name}
+{cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
+```
+
+## Setup - Medium
+
+Use this when you want to verify the connection and troubleshoot.
+
+1. Start Macro Deck.
+2. Open this local debug URL:
+
+```text
+http://127.0.0.1:3333/state
+```
+
+3. Start CS2 and enter a match or training session.
+4. Refresh `/state`.
+5. Check these values:
+
+```text
+HasPayload = true
+Provider.AppId = 730
+Map.Name = de_inferno / de_mirage / ...
+Player.Name = your CS2 name
+Player.ActiveWeapon = weapon_...
+```
+
+6. To inspect the exact raw payload received from CS2:
+
+```text
+http://127.0.0.1:3333/raw
+```
+
+Useful Macro Deck status values:
+
+| Value | Meaning |
+| --- | --- |
+| `starting` | Variables were initialized and the listener is starting. |
+| `waiting_for_cs2` | The listener is running, but no real CS2 payload has been received yet. |
+| `connected` | A real CS2 payload has been received and variables were updated. |
+| `token_invalid` | CS2 sent a payload with a token that does not match the plugin token. |
+| `port_in_use` | The plugin could not bind to port `3333`; another process is using it. |
+| `listener_offline` | The plugin is polling `/state`, but no listener is reachable. |
+| `restarting` | The reset action is restarting the listener. |
+| `error` | An unexpected error occurred while publishing state. |
+
+## Setup - Advanced
+
+Use this for observer dashboards, full match panels, or debugging all payload blocks.
+
+Valve separates GSI blocks into normal player data and observer/spectator data. In Valve's official list, these blocks are under "must be spectating or observing":
+
+```text
+allgrenades
+allplayers_id
+allplayers_match_stats
+allplayers_position
+allplayers_state
+allplayers_weapons
+bomb
+phase_countdowns
+player_position
+```
+
+This plugin exposes variables for those blocks, but CS2 may leave them empty during normal gameplay. In real local tests, `bomb.state` and `bomb.timer` arrived during planted/defused events, while `bomb.position`, `bomb.carrier`, and `bomb.site` stayed empty. That matches Valve's observer/spectator limitation.
+
+If you discover a CS2 mode or config where these fields behave differently, please open a PR with the raw `/raw` payload and a short note explaining the mode, map, and camera state.
 
 ## Build
 
@@ -58,6 +201,7 @@ The local plugin folder must contain at least:
 Cs2MacroDeck.Plugin.dll
 Cs2MacroDeck.Plugin.deps.json
 ExtensionManifest.json
+Plugin.png
 ```
 
 Current development builds compile the shared GSI code directly into `Cs2MacroDeck.Plugin.dll`, so the plugin output does not require `Cs2Gsi.Core.dll`.
@@ -71,123 +215,236 @@ CS2 Macro Deck plugin enabled.
 CS2 GSI server listening on http://127.0.0.1:3333/
 ```
 
-## CS2 Game State Integration Config
-
-Create this file in the CS2 config folder:
-
-```text
-Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
-```
-
-Example config:
-
-```text
-"CS2 Macro Deck GSI"
-{
-    "uri"       "http://127.0.0.1:3333/"
-    "timeout"   "5.0"
-    "buffer"    "0.1"
-    "throttle"  "0.5"
-    "heartbeat" "10.0"
-    "auth"
-    {
-        "token" "cs2md_token_segreto"
-    }
-    "data"
-    {
-        "provider"       "1"
-        "map"            "1"
-        "round"          "1"
-        "player_id"      "1"
-        "player_state"   "1"
-        "player_weapons" "1"
-        "player_match_stats" "1"
-        "bomb"           "1"
-    }
-}
-```
-
-Restart CS2 after creating or editing the config file.
-
 ## Variables
 
-The plugin publishes these Macro Deck variables:
+Macro Deck label placeholders use underscores instead of dots.
 
-Macro Deck label placeholders usually use underscores instead of dots. For example, the plugin variable `cs2md.player.hp` is used in button text as `{cs2md_player_hp}`.
-
-| Variable / button text | Type | Meaning | Example |
-| --- | --- | --- | --- |
-| `cs2md.connected`<br>(`{cs2md_connected}`) | Bool | `true` only after a real CS2 GSI payload has been received. | `true` |
-| `cs2md.status`<br>(`{cs2md_status}`) | String | Plugin connection status. See the status values below. | `connected` |
-| `cs2md.provider.name`<br>(`{cs2md_provider_name}`) | String | GSI provider name from CS2. | `Counter-Strike: Global Offensive` |
-| `cs2md.provider.appid`<br>(`{cs2md_provider_appid}`) | Integer | Steam app id, normally `730`. | `730` |
-| `cs2md.provider.version`<br>(`{cs2md_provider_version}`) | Integer | CS2 provider version number. | `14141` |
-| `cs2md.provider.steamid`<br>(`{cs2md_provider_steamid}`) | String | Steam ID reported by the provider block. | `7656119...` |
-| `cs2md.provider.timestamp`<br>(`{cs2md_provider_timestamp}`) | Integer | Provider timestamp from the GSI payload. | `1776524798` |
-| `cs2md.map.name`<br>(`{cs2md_map_name}`) | String | Current map name. | `de_mirage` |
-| `cs2md.map.mode`<br>(`{cs2md_map_mode}`) | String | Current game mode. | `casual` |
-| `cs2md.map.phase`<br>(`{cs2md_map_phase}`) | String | Current map phase. | `live` |
-| `cs2md.map.round`<br>(`{cs2md_map_round}`) | Integer | Current map round number. | `8` |
-| `cs2md.map.num_matches_to_win_series`<br>(`{cs2md_map_num_matches_to_win_series}`) | Integer | Number of matches needed to win the current series, when CS2 reports it. | `0` |
-| `cs2md.map.ct.consecutive_round_losses`<br>(`{cs2md_map_ct_consecutive_round_losses}`) | Integer | CT consecutive round losses. | `1` |
-| `cs2md.map.ct.timeouts_remaining`<br>(`{cs2md_map_ct_timeouts_remaining}`) | Integer | CT tactical timeouts remaining. | `1` |
-| `cs2md.map.ct.matches_won_this_series`<br>(`{cs2md_map_ct_matches_won_this_series}`) | Integer | CT matches won in the current series. | `0` |
-| `cs2md.map.t.consecutive_round_losses`<br>(`{cs2md_map_t_consecutive_round_losses}`) | Integer | T consecutive round losses. | `0` |
-| `cs2md.map.t.timeouts_remaining`<br>(`{cs2md_map_t_timeouts_remaining}`) | Integer | T tactical timeouts remaining. | `1` |
-| `cs2md.map.t.matches_won_this_series`<br>(`{cs2md_map_t_matches_won_this_series}`) | Integer | T matches won in the current series. | `0` |
-| `cs2md.round.phase`<br>(`{cs2md_round_phase}`) | String | Current round phase. | `freezetime` |
-| `cs2md.round.wins_ct`<br>(`{cs2md_round_wins_ct}`) | Integer | CT score. | `2` |
-| `cs2md.round.wins_t`<br>(`{cs2md_round_wins_t}`) | Integer | T score. | `5` |
-| `cs2md.player.steamid`<br>(`{cs2md_player_steamid}`) | String | Player Steam ID. | `7656119...` |
-| `cs2md.player.name`<br>(`{cs2md_player_name}`) | String | Player name. | `LeoMos` |
-| `cs2md.player.observer_slot`<br>(`{cs2md_player_observer_slot}`) | Integer | Player observer slot. | `1` |
-| `cs2md.player.activity`<br>(`{cs2md_player_activity}`) | String | Player activity. | `playing` |
-| `cs2md.player.hp`<br>(`{cs2md_player_hp}`) | Integer | Player health. | `100` |
-| `cs2md.player.armor`<br>(`{cs2md_player_armor}`) | Integer | Player armor. | `97` |
-| `cs2md.player.helmet`<br>(`{cs2md_player_helmet}`) | Bool | Whether the player has a helmet. | `true` |
-| `cs2md.player.defusekit`<br>(`{cs2md_player_defusekit}`) | Bool | Whether the player has a defuse kit. | `true` |
-| `cs2md.player.flashed`<br>(`{cs2md_player_flashed}`) | Integer | Flash effect value reported by CS2. | `0` |
-| `cs2md.player.smoked`<br>(`{cs2md_player_smoked}`) | Integer | Smoke effect value reported by CS2. | `0` |
-| `cs2md.player.burning`<br>(`{cs2md_player_burning}`) | Integer | Burning effect value reported by CS2. | `0` |
-| `cs2md.player.alive`<br>(`{cs2md_player_alive}`) | Bool | Whether player health is above zero. | `true` |
-| `cs2md.player.money`<br>(`{cs2md_player_money}`) | Integer | Player money. | `3050` |
-| `cs2md.player.team`<br>(`{cs2md_player_team}`) | String | Player team, usually `CT` or `T`. | `T` |
-| `cs2md.player.kills_round`<br>(`{cs2md_player_kills_round}`) | Integer | Kills in the current round. | `1` |
-| `cs2md.player.headshot_kills_round`<br>(`{cs2md_player_headshot_kills_round}`) | Integer | Headshot kills in the current round. | `0` |
-| `cs2md.player.kills_total`<br>(`{cs2md_player_kills_total}`) | Integer | Match kills. | `5` |
-| `cs2md.player.assists`<br>(`{cs2md_player_assists}`) | Integer | Match assists. | `0` |
-| `cs2md.player.deaths`<br>(`{cs2md_player_deaths}`) | Integer | Match deaths. | `1` |
-| `cs2md.player.mvps`<br>(`{cs2md_player_mvps}`) | Integer | Match MVP count. | `0` |
-| `cs2md.player.score`<br>(`{cs2md_player_score}`) | Integer | Match score. | `7` |
-| `cs2md.player.equip_value`<br>(`{cs2md_player_equip_value}`) | Integer | Current equipment value. | `4100` |
-| `cs2md.weapon.name`<br>(`{cs2md_weapon_name}`) | String | Current weapon name, including while reloading. | `weapon_galilar` |
-| `cs2md.weapon.type`<br>(`{cs2md_weapon_type}`) | String | Current weapon type. | `Rifle` |
-| `cs2md.weapon.paintkit`<br>(`{cs2md_weapon_paintkit}`) | String | Current weapon paint kit reported by CS2. | `default` |
-| `cs2md.weapon.state`<br>(`{cs2md_weapon_state}`) | String | Current weapon state. | `active` / `reloading` |
-| `cs2md.weapon.ammo_clip`<br>(`{cs2md_weapon_ammo_clip}`) | Integer | Ammo in the current weapon clip. | `24` |
-| `cs2md.weapon.ammo_clip_max`<br>(`{cs2md_weapon_ammo_clip_max}`) | Integer | Maximum clip size for the current weapon. | `35` |
-| `cs2md.weapon.ammo_reserve`<br>(`{cs2md_weapon_ammo_reserve}`) | Integer | Reserve ammo value reported by CS2. | `4` |
-| `cs2md.bomb.state`<br>(`{cs2md_bomb_state}`) | String | Bomb state from CS2 GSI. | `planted` |
-| `cs2md.bomb.site`<br>(`{cs2md_bomb_site}`) | String | Compatibility alias for bomb position. | `1210.5, -842.25, 64.0` |
-| `cs2md.bomb.position`<br>(`{cs2md_bomb_position}`) | String | Raw bomb coordinate string from CS2 GSI, when CS2 sends the `bomb` block. | `1210.5, -842.25, 64.0` |
-| `cs2md.bomb.timer`<br>(`{cs2md_bomb_timer}`) | String | Bomb countdown when available or locally estimated after plant. | `14s` |
-| `cs2md.bomb.carrier`<br>(`{cs2md_bomb_carrier}`) | String | Bomb carrier/player field when CS2 sends it. | `7656119...` |
-
-`cs2md.bomb.position`, `cs2md.bomb.site`, and `cs2md.bomb.carrier` depend on CS2 sending the `bomb` payload block. Valve documents that bomb position data is observer/spectator-only, so these values are often empty during normal player gameplay. `cs2md.bomb.site` is kept as a compatibility alias for now; automatic A/B site detection is not implemented yet.
-
-Useful button label examples:
+Example:
 
 ```text
-STAT {cs2md_status}
-CONN {cs2md_connected}
+Plugin variable: cs2md.player.hp
+Button text:     {cs2md_player_hp}
 ```
+
+Slot numbers are part of the variable name.
+
+Example:
+
+```text
+Plugin variable: cs2md.ap01.name
+Button text:     {cs2md_ap01_name}
+```
+
+### Connection
+
+| Variable | Placeholder | Type | Meaning |
+| --- | --- | --- | --- |
+| `cs2md.connected` | `{cs2md_connected}` | Bool | `true` after a real CS2 payload has been received. |
+| `cs2md.status` | `{cs2md_status}` | String | Plugin/listener status. |
+
+### Provider
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.provider.name` | `{cs2md_provider_name}` | String |
+| `cs2md.provider.appid` | `{cs2md_provider_appid}` | Integer |
+| `cs2md.provider.version` | `{cs2md_provider_version}` | Integer |
+| `cs2md.provider.steamid` | `{cs2md_provider_steamid}` | String |
+| `cs2md.provider.timestamp` | `{cs2md_provider_timestamp}` | Integer |
+
+### Map And Round
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.map.name` | `{cs2md_map_name}` | String |
+| `cs2md.map.mode` | `{cs2md_map_mode}` | String |
+| `cs2md.map.phase` | `{cs2md_map_phase}` | String |
+| `cs2md.map.round` | `{cs2md_map_round}` | Integer |
+| `cs2md.map.num_matches_to_win_series` | `{cs2md_map_num_matches_to_win_series}` | Integer |
+| `cs2md.map.ct.consecutive_round_losses` | `{cs2md_map_ct_consecutive_round_losses}` | Integer |
+| `cs2md.map.ct.timeouts_remaining` | `{cs2md_map_ct_timeouts_remaining}` | Integer |
+| `cs2md.map.ct.matches_won_this_series` | `{cs2md_map_ct_matches_won_this_series}` | Integer |
+| `cs2md.map.t.consecutive_round_losses` | `{cs2md_map_t_consecutive_round_losses}` | Integer |
+| `cs2md.map.t.timeouts_remaining` | `{cs2md_map_t_timeouts_remaining}` | Integer |
+| `cs2md.map.t.matches_won_this_series` | `{cs2md_map_t_matches_won_this_series}` | Integer |
+| `cs2md.round.phase` | `{cs2md_round_phase}` | String |
+| `cs2md.round.win_team` | `{cs2md_round_win_team}` | String |
+| `cs2md.round.wins_ct` | `{cs2md_round_wins_ct}` | Integer |
+| `cs2md.round.wins_t` | `{cs2md_round_wins_t}` | Integer |
+
+### Map Round Wins
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.rw.count` | `{cs2md_rw_count}` | Integer |
+| `cs2md.rw.history` | `{cs2md_rw_history}` | String |
+| `cs2md.rw.raw_json` | `{cs2md_rw_raw_json}` | String |
+| `cs2md.rw.01` to `.30` | `{cs2md_rw_01}` to `{cs2md_rw_30}` | String |
+
+### Phase Countdowns
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.phase_countdowns.phase` | `{cs2md_phase_countdowns_phase}` | String |
+| `cs2md.phase_countdowns.ends_in` | `{cs2md_phase_countdowns_ends_in}` | String |
+
+### Current Player
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.player.steamid` | `{cs2md_player_steamid}` | String |
+| `cs2md.player.name` | `{cs2md_player_name}` | String |
+| `cs2md.player.observer_slot` | `{cs2md_player_observer_slot}` | Integer |
+| `cs2md.player.activity` | `{cs2md_player_activity}` | String |
+| `cs2md.player.team` | `{cs2md_player_team}` | String |
+| `cs2md.player.hp` | `{cs2md_player_hp}` | Integer |
+| `cs2md.player.armor` | `{cs2md_player_armor}` | Integer |
+| `cs2md.player.helmet` | `{cs2md_player_helmet}` | Bool |
+| `cs2md.player.defusekit` | `{cs2md_player_defusekit}` | Bool |
+| `cs2md.player.flashed` | `{cs2md_player_flashed}` | Integer |
+| `cs2md.player.smoked` | `{cs2md_player_smoked}` | Integer |
+| `cs2md.player.burning` | `{cs2md_player_burning}` | Integer |
+| `cs2md.player.alive` | `{cs2md_player_alive}` | Bool |
+| `cs2md.player.money` | `{cs2md_player_money}` | Integer |
+| `cs2md.player.kills_round` | `{cs2md_player_kills_round}` | Integer |
+| `cs2md.player.headshot_kills_round` | `{cs2md_player_headshot_kills_round}` | Integer |
+| `cs2md.player.kills_total` | `{cs2md_player_kills_total}` | Integer |
+| `cs2md.player.assists` | `{cs2md_player_assists}` | Integer |
+| `cs2md.player.deaths` | `{cs2md_player_deaths}` | Integer |
+| `cs2md.player.mvps` | `{cs2md_player_mvps}` | Integer |
+| `cs2md.player.score` | `{cs2md_player_score}` | Integer |
+| `cs2md.player.equip_value` | `{cs2md_player_equip_value}` | Integer |
+| `cs2md.player.position` | `{cs2md_player_position}` | String |
+| `cs2md.player.forward` | `{cs2md_player_forward}` | String |
+
+### Current Weapon
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.weapon.name` | `{cs2md_weapon_name}` | String |
+| `cs2md.weapon.type` | `{cs2md_weapon_type}` | String |
+| `cs2md.weapon.paintkit` | `{cs2md_weapon_paintkit}` | String |
+| `cs2md.weapon.state` | `{cs2md_weapon_state}` | String |
+| `cs2md.weapon.ammo_clip` | `{cs2md_weapon_ammo_clip}` | Integer |
+| `cs2md.weapon.ammo_clip_max` | `{cs2md_weapon_ammo_clip_max}` | Integer |
+| `cs2md.weapon.ammo_reserve` | `{cs2md_weapon_ammo_reserve}` | Integer |
+
+The plugin keeps the weapon visible while `weapon.state` is `active` or `reloading`.
+
+### Current Player Weapon Slots
+
+Current-player inventory is exposed as `cs2md.pw01` through `cs2md.pw08`.
+
+| Pattern | Placeholder Example | Type |
+| --- | --- | --- |
+| `cs2md.pw.count` | `{cs2md_pw_count}` | Integer |
+| `cs2md.pw.raw_json` | `{cs2md_pw_raw_json}` | String |
+| `cs2md.pw01.slot` | `{cs2md_pw01_slot}` | String |
+| `cs2md.pw01.name` | `{cs2md_pw01_name}` | String |
+| `cs2md.pw01.type` | `{cs2md_pw01_type}` | String |
+| `cs2md.pw01.paint` | `{cs2md_pw01_paint}` | String |
+| `cs2md.pw01.state` | `{cs2md_pw01_state}` | String |
+| `cs2md.pw01.ammo` | `{cs2md_pw01_ammo}` | Integer |
+| `cs2md.pw01.ammo_max` | `{cs2md_pw01_ammo_max}` | Integer |
+| `cs2md.pw01.reserve` | `{cs2md_pw01_reserve}` | Integer |
+
+Replace `01` with `02` through `08` for the other slots.
+
+### Bomb
+
+| Variable | Placeholder | Type |
+| --- | --- | --- |
+| `cs2md.bomb.state` | `{cs2md_bomb_state}` | String |
+| `cs2md.bomb.timer` | `{cs2md_bomb_timer}` | String |
+| `cs2md.bomb.position` | `{cs2md_bomb_position}` | String |
+| `cs2md.bomb.carrier` | `{cs2md_bomb_carrier}` | String |
+| `cs2md.bomb.site` | `{cs2md_bomb_site}` | String |
+
+`cs2md.bomb.site` is currently a compatibility alias for `bomb.position`; automatic A/B site detection is not implemented yet.
+
+### All Players
+
+Observer/spectator payloads are exposed as `cs2md.ap01` through `cs2md.ap10`. Short names are used because Macro Deck truncates long variable names in the picker.
+
+| Pattern | Placeholder Example | Type |
+| --- | --- | --- |
+| `cs2md.ap.count` | `{cs2md_ap_count}` | Integer |
+| `cs2md.ap.raw_json` | `{cs2md_ap_raw_json}` | String |
+| `cs2md.ap01.steamid` | `{cs2md_ap01_steamid}` | String |
+| `cs2md.ap01.name` | `{cs2md_ap01_name}` | String |
+| `cs2md.ap01.slot` | `{cs2md_ap01_slot}` | Integer |
+| `cs2md.ap01.activity` | `{cs2md_ap01_activity}` | String |
+| `cs2md.ap01.team` | `{cs2md_ap01_team}` | String |
+| `cs2md.ap01.hp` | `{cs2md_ap01_hp}` | Integer |
+| `cs2md.ap01.armor` | `{cs2md_ap01_armor}` | Integer |
+| `cs2md.ap01.helmet` | `{cs2md_ap01_helmet}` | Bool |
+| `cs2md.ap01.defusekit` | `{cs2md_ap01_defusekit}` | Bool |
+| `cs2md.ap01.flashed` | `{cs2md_ap01_flashed}` | Integer |
+| `cs2md.ap01.smoked` | `{cs2md_ap01_smoked}` | Integer |
+| `cs2md.ap01.burning` | `{cs2md_ap01_burning}` | Integer |
+| `cs2md.ap01.alive` | `{cs2md_ap01_alive}` | Bool |
+| `cs2md.ap01.money` | `{cs2md_ap01_money}` | Integer |
+| `cs2md.ap01.kr` | `{cs2md_ap01_kr}` | Integer |
+| `cs2md.ap01.hsr` | `{cs2md_ap01_hsr}` | Integer |
+| `cs2md.ap01.kt` | `{cs2md_ap01_kt}` | Integer |
+| `cs2md.ap01.assists` | `{cs2md_ap01_assists}` | Integer |
+| `cs2md.ap01.deaths` | `{cs2md_ap01_deaths}` | Integer |
+| `cs2md.ap01.mvps` | `{cs2md_ap01_mvps}` | Integer |
+| `cs2md.ap01.score` | `{cs2md_ap01_score}` | Integer |
+| `cs2md.ap01.equip` | `{cs2md_ap01_equip}` | Integer |
+| `cs2md.ap01.pos` | `{cs2md_ap01_pos}` | String |
+| `cs2md.ap01.forward` | `{cs2md_ap01_forward}` | String |
+| `cs2md.ap01.aw.name` | `{cs2md_ap01_aw_name}` | String |
+| `cs2md.ap01.aw.type` | `{cs2md_ap01_aw_type}` | String |
+| `cs2md.ap01.aw.paint` | `{cs2md_ap01_aw_paint}` | String |
+| `cs2md.ap01.aw.state` | `{cs2md_ap01_aw_state}` | String |
+| `cs2md.ap01.aw.ammo` | `{cs2md_ap01_aw_ammo}` | Integer |
+| `cs2md.ap01.aw.ammo_max` | `{cs2md_ap01_aw_ammo_max}` | Integer |
+| `cs2md.ap01.aw.reserve` | `{cs2md_ap01_aw_reserve}` | Integer |
+| `cs2md.ap01.w.count` | `{cs2md_ap01_w_count}` | Integer |
+| `cs2md.ap01.w.raw_json` | `{cs2md_ap01_w_raw_json}` | String |
+| `cs2md.ap01.w01.slot` | `{cs2md_ap01_w01_slot}` | String |
+| `cs2md.ap01.w01.name` | `{cs2md_ap01_w01_name}` | String |
+| `cs2md.ap01.w01.type` | `{cs2md_ap01_w01_type}` | String |
+| `cs2md.ap01.w01.paint` | `{cs2md_ap01_w01_paint}` | String |
+| `cs2md.ap01.w01.state` | `{cs2md_ap01_w01_state}` | String |
+| `cs2md.ap01.w01.ammo` | `{cs2md_ap01_w01_ammo}` | Integer |
+| `cs2md.ap01.w01.ammo_max` | `{cs2md_ap01_w01_ammo_max}` | Integer |
+| `cs2md.ap01.w01.reserve` | `{cs2md_ap01_w01_reserve}` | Integer |
+
+Replace the first `01` with `02` through `10` for the other players. Replace the second weapon `01` with `02` through `08` for each player's weapon slots.
+
+### Grenades
+
+Observer/spectator grenade payloads are exposed as `cs2md.g01` through `cs2md.g16`.
+
+| Pattern | Placeholder Example | Type |
+| --- | --- | --- |
+| `cs2md.g.count` | `{cs2md_g_count}` | Integer |
+| `cs2md.g.raw_json` | `{cs2md_g_raw_json}` | String |
+| `cs2md.g01.id` | `{cs2md_g01_id}` | String |
+| `cs2md.g01.owner` | `{cs2md_g01_owner}` | String |
+| `cs2md.g01.type` | `{cs2md_g01_type}` | String |
+| `cs2md.g01.pos` | `{cs2md_g01_pos}` | String |
+| `cs2md.g01.vel` | `{cs2md_g01_vel}` | String |
+| `cs2md.g01.life` | `{cs2md_g01_life}` | String |
+| `cs2md.g01.effect` | `{cs2md_g01_effect}` | String |
+| `cs2md.g01.flames` | `{cs2md_g01_flames}` | Integer |
+| `cs2md.g01.raw_json` | `{cs2md_g01_raw_json}` | String |
+
+Replace `01` with `02` through `16` for the other grenade slots.
+
+## Button Label Examples
+
+Basic live button:
 
 ```text
 {cs2md_map_name}
-{cs2md_map_mode} {cs2md_map_phase}
-R{cs2md_map_round}
+{cs2md_round_phase}
 CT {cs2md_round_wins_ct} / T {cs2md_round_wins_t}
 ```
+
+Player button:
 
 ```text
 {cs2md_player_name}
@@ -196,12 +453,16 @@ HP {cs2md_player_hp}
 AR {cs2md_player_armor}
 ```
 
+Weapon button:
+
 ```text
 {cs2md_weapon_name}
 {cs2md_weapon_type}
 {cs2md_weapon_state}
-{cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_reserve}
+{cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
 ```
+
+Bomb button:
 
 ```text
 BOMB {cs2md_bomb_state}
@@ -209,18 +470,48 @@ TIMER {cs2md_bomb_timer}
 POS {cs2md_bomb_position}
 ```
 
-`cs2md.status` uses these values:
+Observer player slot:
 
-| Value | Meaning |
-| --- | --- |
-| `starting` | Variables were initialized and the listener is starting. |
-| `waiting_for_cs2` | The listener is running, but no real CS2 payload has been received yet. |
-| `connected` | A real CS2 payload has been received and variables were updated. |
-| `token_invalid` | CS2 sent a payload with a token that does not match the plugin token. |
-| `port_in_use` | The plugin could not bind to port `3333`; another process is using it. |
-| `listener_offline` | The plugin is polling `/state`, but no listener is reachable. |
-| `restarting` | The reset action is restarting the listener. |
-| `error` | An unexpected error occurred while publishing state. |
+```text
+P1 {cs2md_ap01_name}
+{cs2md_ap01_team}
+HP {cs2md_ap01_hp}
+{cs2md_ap01_aw_name}
+```
+
+Grenade slot:
+
+```text
+Nade {cs2md_g01_type}
+owner {cs2md_g01_owner}
+{cs2md_g01_pos}
+```
+
+## What May Be Empty
+
+Some variables are only available when CS2 actually sends that block.
+
+Usually available during normal player gameplay:
+
+- `provider`
+- `map`
+- `round`
+- `player_id`
+- `player_state`
+- `player_weapons`
+- `player_match_stats`
+
+Often observer/spectator-only according to Valve:
+
+- `allplayers_*`
+- `allgrenades`
+- `bomb.position`
+- `bomb.carrier`
+- `phase_countdowns`
+- `player.position`
+- `player.forward`
+
+The plugin still exposes these variables, but empty values usually mean CS2 did not send that field.
 
 ## Actions
 
@@ -288,11 +579,21 @@ The icon is an original radar/HUD-style design. It does not use Counter-Strike, 
 
 The `GSI` lettering uses Oxanium, released under the SIL Open Font License. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+## Projects
+
+- `Cs2MacroDeck.Plugin`: Macro Deck plugin.
+- `Cs2Gsi.Core`: CS2 GSI models, parser, defaults, and shared HTTP server.
+- `Cs2Gsi.Listener`: optional console/debug listener for development.
+- `tools`: helper launch files for the debug listener.
+
+For normal use, run Macro Deck and let the plugin receive CS2 data directly. Do not run `Cs2Gsi.Listener` at the same time unless you are explicitly debugging, because both try to use port `3333`.
+
 ## Roadmap Before Store Submission
 
-- Add configurable token and port.
-- Complete real CS2 testing.
+- Add configurable token and port, or explicitly freeze the defaults for `0.1.0`.
+- Add final Macro Deck screenshots/GIFs.
 - Tag the first release as `v0.1.0`.
+- Submit to the Macro Deck Extension Store.
 
 ## License
 

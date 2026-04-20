@@ -5,10 +5,16 @@ public class GameState
     public bool HasPayload { get; set; }
     public ProviderState Provider { get; set; } = new();
     public PlayerState Player { get; set; } = new();
+    public List<PlayerState> AllPlayers { get; set; } = new();
     public RoundState Round { get; set; } = new();
     public BombState Bomb { get; set; } = new();
     public MapState Map { get; set; } = new();
+    public MapRoundWinsState MapRoundWins { get; set; } = new();
+    public PhaseCountdownsState PhaseCountdowns { get; set; } = new();
+    public List<GrenadeState> Grenades { get; set; } = new();
     public string AuthToken { get; set; } = "";
+    public string AllPlayersRawJson { get; set; } = "";
+    public string GrenadesRawJson { get; set; } = "";
 }
 
 public class ProviderState
@@ -51,11 +57,28 @@ public class PlayerState
     public int AmmoClip { get; set; }
     public int AmmoClipMax { get; set; }
     public int AmmoReserve { get; set; }
+    public string Position { get; set; } = "";
+    public string Forward { get; set; } = "";
+    public List<WeaponInfo> Weapons { get; set; } = new();
+    public string WeaponsRawJson { get; set; } = "";
+}
+
+public class WeaponInfo
+{
+    public string Slot { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string PaintKit { get; set; } = "";
+    public string State { get; set; } = "";
+    public int AmmoClip { get; set; }
+    public int AmmoClipMax { get; set; }
+    public int AmmoReserve { get; set; }
 }
 
 public class RoundState
 {
     public string Phase { get; set; } = "";
+    public string WinTeam { get; set; } = "";
     public int WinsCt { get; set; }
     public int WinsT { get; set; }
 }
@@ -81,9 +104,35 @@ public class MapState
     public TeamMapState T { get; set; } = new();
 }
 
+public class MapRoundWinsState
+{
+    public List<string> Wins { get; set; } = new();
+    public string History { get; set; } = "";
+    public string RawJson { get; set; } = "";
+}
+
 public class TeamMapState
 {
     public int ConsecutiveRoundLosses { get; set; }
     public int TimeoutsRemaining { get; set; }
     public int MatchesWonThisSeries { get; set; }
+}
+
+public class PhaseCountdownsState
+{
+    public string Phase { get; set; } = "";
+    public string PhaseEndsIn { get; set; } = "";
+}
+
+public class GrenadeState
+{
+    public string Id { get; set; } = "";
+    public string Owner { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string Position { get; set; } = "";
+    public string Velocity { get; set; } = "";
+    public string Lifetime { get; set; } = "";
+    public string EffectTime { get; set; } = "";
+    public int FlamesCount { get; set; }
+    public string RawJson { get; set; } = "";
 }
