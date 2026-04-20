@@ -90,6 +90,7 @@ internal sealed class Cs2PluginSettingsForm : Form
         toolbar.Controls.Add(CreateButton("Enable all", (_, _) => SetAllVariables(true)));
         toolbar.Controls.Add(CreateButton("Disable all optional", (_, _) => SetAllVariables(false)));
         toolbar.Controls.Add(CreateButton("Expand all", (_, _) => variablesTree.ExpandAll()));
+        toolbar.Controls.Add(CreateButton("Collapse all", (_, _) => variablesTree.CollapseAll()));
         toolbar.Controls.Add(CreateButton("Copy CS2 config", (_, _) => CopyCs2Config()));
 
         variablesTree.CheckBoxes = true;
@@ -176,7 +177,7 @@ internal sealed class Cs2PluginSettingsForm : Form
 
         variablesTree.EndUpdate();
         suppressNodeEvents = false;
-        variablesTree.ExpandAll();
+        variablesTree.CollapseAll();
     }
 
     private void VariablesTreeAfterCheck(object? sender, TreeViewEventArgs e)
