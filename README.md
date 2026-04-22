@@ -64,7 +64,7 @@ Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
     "heartbeat" "10.0"
     "auth"
     {
-        "token" "cs2md_token_segreto"
+        "token" "cs2_macrodeck_secret"
     }
     "output"
     {
@@ -598,7 +598,7 @@ Port already in use:
 Token mismatch:
 
 - The CS2 config token must match the plugin default token.
-- Current default token: `cs2md_token_segreto`
+- Current default token: `cs2_macrodeck_secret`
 - `cs2md.status` is set to `token_invalid` when the plugin receives a payload with the wrong token.
 
 Macro Deck update check returns 404 for this plugin:
