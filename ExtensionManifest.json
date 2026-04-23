@@ -4,7 +4,7 @@
   "author": "LeoM",
   "repository": "https://github.com/leo-divini/CS2_Macro_Deck_Plugin",
   "packageId": "LeoM.Cs2Gsi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "target-plugin-api-version": 40,
   "target-macro-deck-version": "2.14.1",
   "dll": "Cs2MacroDeck.Plugin.dll"
