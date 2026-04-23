@@ -8,6 +8,7 @@ obj/
 *.suo
 
 # Local generated packages/artifacts
+artifacts/
 *.nupkg
 *.snupkg
 
