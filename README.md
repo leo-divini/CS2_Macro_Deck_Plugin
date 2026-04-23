@@ -601,6 +601,12 @@ Token mismatch:
 - Current default token: `cs2_macrodeck_secret`
 - `cs2md.status` is set to `token_invalid` when the plugin receives a payload with the wrong token.
 
+Macro Deck `Variable changed` can update visuals but not reliably switch folders on the phone client:
+
+- In local testing, button text/color changes triggered by `Variable changed` were reflected on the phone client.
+- `Change folder` triggered by the same variable event updated the desktop/editor instance, but not the phone client as expected.
+- Prefer a single CS2 page that changes labels, colors, and visibility from variables such as `cs2md.player.team` instead of relying on automatic CT/T folder switching.
+
 Macro Deck update check returns 404 for this plugin:
 
 - This is expected for local development while the plugin is not published in the Extension Store.
