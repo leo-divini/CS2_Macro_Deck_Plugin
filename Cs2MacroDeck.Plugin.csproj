@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>Cs2MacroDeck.Plugin</AssemblyName>
+    <RootNamespace>Cs2MacroDeck.Plugin</RootNamespace>
+    <Version>0.1.0</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Cs2MacroDeck.Plugin\**\*.cs" Exclude="Cs2MacroDeck.Plugin\bin\**;Cs2MacroDeck.Plugin\obj\**" />
+    <Compile Include="Cs2Gsi.Core\Config\**\*.cs" LinkBase="Cs2Gsi.Core\Config" />
+    <Compile Include="Cs2Gsi.Core\Http\**\*.cs" LinkBase="Cs2Gsi.Core\Http" />
+    <Compile Include="Cs2Gsi.Core\Models\**\*.cs" LinkBase="Cs2Gsi.Core\Models" />
+    <Compile Include="Cs2Gsi.Core\Parsing\**\*.cs" LinkBase="Cs2Gsi.Core\Parsing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Macro Deck 2" Condition="Exists('Macro Deck 2.dll')">
+      <HintPath>Macro Deck 2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Macro Deck 2" Condition="!Exists('Macro Deck 2.dll')">
+      <HintPath>C:\Program Files\Macro Deck\Macro Deck 2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ExtensionManifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Cs2MacroDeck.Plugin\Plugin.png" Link="Plugin.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="ExtensionIcon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

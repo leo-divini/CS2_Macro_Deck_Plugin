@@ -17,8 +17,8 @@ It receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes t
 - The listener is local only and binds to `127.0.0.1`.
 - Default listener port: `3333`.
 - Default token: `cs2_macrodeck_secret`.
-- Current tested Macro Deck version: `2.15.0-b1`.
-- Extension manifest target: `2.15.0`.
+- Extension manifest target: `2.14.1`.
+- Smoke-tested on Macro Deck `2.15.0-b1`.
 
 Official Valve GSI documentation:
 
