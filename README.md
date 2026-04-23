@@ -171,6 +171,8 @@ HP {cs2md_player_hp}
 
 Advanced variables for all players, grenades, map round wins, current-player weapon slots, and raw JSON are available from the plugin settings.
 
+See [docs/VARIABLES.md](docs/VARIABLES.md) for the full variable guide and more button examples.
+
 ## Status Values
 
 | Value | Meaning |

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 
@@ -5,6 +6,9 @@ namespace Cs2MacroDeck.Plugin;
 
 internal sealed class Cs2PluginSettingsForm : Form
 {
+    private const string VariablesHelpUrl =
+        "https://github.com/leo-divini/CS2_Macro_Deck_Plugin/blob/main/docs/VARIABLES.md";
+
     private readonly TextBox tokenTextBox = new();
     private readonly NumericUpDown portInput = new();
     private readonly TreeView variablesTree = new();
@@ -92,6 +96,7 @@ internal sealed class Cs2PluginSettingsForm : Form
         toolbar.Controls.Add(CreateButton("Expand all", (_, _) => variablesTree.ExpandAll()));
         toolbar.Controls.Add(CreateButton("Collapse all", (_, _) => variablesTree.CollapseAll()));
         toolbar.Controls.Add(CreateButton("Copy CS2 config", (_, _) => CopyCs2Config()));
+        toolbar.Controls.Add(CreateButton("Variables help", (_, _) => OpenVariablesHelp()));
 
         variablesTree.CheckBoxes = true;
         variablesTree.Dock = DockStyle.Fill;
@@ -253,6 +258,25 @@ internal sealed class Cs2PluginSettingsForm : Form
     {
         var settings = CollectSettings();
         Clipboard.SetText(BuildCs2Config(settings));
+    }
+
+    private static void OpenVariablesHelp()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(VariablesHelpUrl)
+            {
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Could not open variables help: {ex.Message}",
+                "CS2 GSI for Macro Deck",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
     }
 
     private void SaveAndClose()
