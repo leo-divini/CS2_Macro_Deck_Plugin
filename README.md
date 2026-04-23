@@ -6,6 +6,10 @@ CS2 GSI for Macro Deck is a Macro Deck 2 plugin for Counter-Strike 2 Game State 
 
 It receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes the game state as Macro Deck variables that can be used in button labels, colors, conditions, and actions.
 
+## Preview
+
+![Macro Deck CS2 dashboard sample](docs/images/sample.png)
+
 ## Important
 
 - This is a plugin for Macro Deck 2. It is not a standalone app.
