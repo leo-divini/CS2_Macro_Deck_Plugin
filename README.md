@@ -10,21 +10,12 @@ Official Valve GSI documentation:
 
 https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_State_Integration
 
-## Screenshots
-
-Current screenshots to add before release:
-
-- `docs/images/macrodeck-dashboard-live.png` - Macro Deck dashboard during a live round.
-- `docs/images/macrodeck-dashboard-bomb.png` - Bomb planted / timer test.
-- `docs/images/macrodeck-dashboard-observer.png` - Observer/spectator test with `allplayers` data.
-
 ## Status
 
 This project is in early development. It builds, loads locally in Macro Deck, and has been tested with real CS2 payloads, but it still needs final release cleanup before Macro Deck Extension Store submission.
 
 Known pre-release work:
 
-- Add final screenshots/GIFs.
 - Do final clean build and release tag.
 - Submit to the Macro Deck Extension Store.
 
