@@ -290,7 +290,7 @@ The plugin project compiles the shared GSI code directly into `Cs2MacroDeck.Plug
 The optional console listener can be started with:
 
 ```powershell
-tools\run-listener.cmd
+dotnet run --project Cs2Gsi.Listener\Cs2Gsi.Listener.csproj
 ```
 
 Close Macro Deck first, or free port `3333`, before running the debug listener.
@@ -300,7 +300,6 @@ Close Macro Deck first, or free port `3333`, before running the debug listener.
 - `Cs2MacroDeck.Plugin`: Macro Deck plugin.
 - `Cs2Gsi.Core`: CS2 GSI models, parser, defaults, and shared HTTP server.
 - `Cs2Gsi.Listener`: optional console/debug listener for development.
-- `tools`: helper launch files for the debug listener.
 
 ## Privacy
 

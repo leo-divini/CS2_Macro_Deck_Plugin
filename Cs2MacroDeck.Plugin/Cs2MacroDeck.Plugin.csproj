@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
+    <Version>0.1.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
