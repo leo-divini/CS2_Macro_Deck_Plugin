@@ -133,10 +133,10 @@ public sealed class GsiHttpServer : IDisposable
         }
 
         var state = ParseMergedState(body);
-        ApplyBombTimer(state);
 
         lock (syncRoot)
         {
+            ApplyBombTimer(state);
             lastState = state;
             lastRawPayload = body;
         }

@@ -10,18 +10,31 @@ var config = new ListenerConfig
 };
 
 Console.WriteLine("=== CS2 GSI Listener ===");
-Console.WriteLine($"Token: {config.Token}");
 Console.WriteLine($"Porta: {config.Port}");
 Console.WriteLine();
 
-var server = new GsiHttpServer(config.Token, config.Port);
+using var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    cts.Cancel();
+};
+
+using var server = new GsiHttpServer(config.Token, config.Port);
 server.StateReceived = LogState;
 server.RequestFailed = ex => Console.WriteLine($"Errore richiesta GSI: {ex.Message}");
 server.Start();
 
 Console.WriteLine($"Listener avviato su {server.Prefix}");
 Console.WriteLine("In attesa di dati da CS2...\n");
-await Task.Delay(Timeout.InfiniteTimeSpan);
+try
+{
+    await Task.Delay(Timeout.InfiniteTimeSpan, cts.Token);
+}
+catch (OperationCanceledException)
+{
+    // Shutdown requested via CTRL+C.
+}
 
 static void LogState(GameState s)
 {

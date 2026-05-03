@@ -70,6 +70,7 @@ internal static class Cs2StateVariablePublisher
         lock (SyncRoot)
         {
             cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
             cancellationTokenSource = null;
             pollingStartedBecausePortInUse = false;
             loggedConnectionError = false;
