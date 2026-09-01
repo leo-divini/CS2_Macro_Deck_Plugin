@@ -2,6 +2,8 @@
 
 This page explains how to use CS2 GSI for Macro Deck variables in Macro Deck buttons.
 
+**🌐 Read this in: [English](VARIABLES.md) · [Italiano](VARIABLES.it.md)**
+
 ## Placeholder Format
 
 Plugin variable names use dots:

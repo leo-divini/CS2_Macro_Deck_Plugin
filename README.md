@@ -1,18 +1,138 @@
-# CS2 GSI for Macro Deck
+# 🎮 CS2 GSI for Macro Deck
 
 ![CS2 GSI for Macro Deck icon](ExtensionIcon.png)
 
-CS2 GSI for Macro Deck is a Macro Deck 2 plugin for Counter-Strike 2 Game State Integration.
+> Live Counter-Strike 2 game state on your Macro Deck: HP, money, ammo, bomb state, round info and more — as button labels, colors, conditions and actions.
+>
+> The plugin receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes them as Macro Deck variables.
 
-It receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes the game state as Macro Deck variables that can be used in button labels, colors, conditions, and actions.
+**🌐 Read this in: [English](README.md) · [Italiano](README.it.md)**
 
-## Preview
+---
 
-![Macro Deck CS2 dashboard sample](docs/images/sample.png)
+## ⚡ Quick Start
 
-## Important
+Get everything working in about **5 minutes**. Details are in the sections below.
 
-- This is a plugin for Macro Deck 2. It is not a standalone app.
+### 1️⃣ Install the plugin
+
+Copy the plugin folder into Macro Deck:
+
+```text
+%AppData%\Macro Deck\plugins\LeoM.Cs2Gsi
+```
+
+The folder must contain at least these files:
+
+```text
+Cs2MacroDeck.Plugin.dll
+Cs2MacroDeck.Plugin.deps.json
+ExtensionManifest.json
+Plugin.png
+ExtensionIcon.png
+```
+
+Restart Macro Deck.
+
+### 2️⃣ Add the CS2 GSI config
+
+Create this file in the CS2 config folder:
+
+```text
+Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
+```
+
+Paste this config and save:
+
+```text
+"CS2 Macro Deck GSI"
+{
+    "uri"       "http://127.0.0.1:3333/"
+    "timeout"   "5.0"
+    "buffer"    "0.1"
+    "throttle"  "0.5"
+    "heartbeat" "10.0"
+    "auth"
+    {
+        "token" "cs2_macrodeck_secret"
+    }
+    "output"
+    {
+        "precision_time"     "3"
+        "precision_position" "1"
+        "precision_vector"   "3"
+    }
+    "data"
+    {
+        "provider"               "1"
+        "map"                    "1"
+        "map_round_wins"         "1"
+        "round"                  "1"
+        "player_id"              "1"
+        "player_state"           "1"
+        "player_weapons"         "1"
+        "player_match_stats"     "1"
+        "player_position"        "1"
+        "bomb"                   "1"
+        "phase_countdowns"       "1"
+        "allplayers_id"          "1"
+        "allplayers_state"       "1"
+        "allplayers_match_stats" "1"
+        "allplayers_weapons"     "1"
+        "allplayers_position"    "1"
+        "allgrenades"            "1"
+    }
+}
+```
+
+Restart CS2.
+
+### 3️⃣ Verify it works
+
+Start Macro Deck, launch [Counter-Strike 2 on Steam](https://store.steampowered.com/app/730/CounterStrike_2/) and enter a live match (or a training session). Then open:
+
+```text
+http://127.0.0.1:3333/state
+```
+
+You should see values like:
+
+```text
+HasPayload = true
+Provider.AppId = 730
+Map.Name = de_mirage / de_inferno / ...
+Player.Name = your CS2 name
+Player.ActiveWeapon = weapon_...
+```
+
+Still empty? See [Troubleshooting](#troubleshooting).
+
+### 4️⃣ Use the variables
+
+Macro Deck placeholders use underscores instead of dots:
+
+```text
+Plugin variable: cs2md.player.hp
+Button text:     {cs2md_player_hp}
+```
+
+Example button label:
+
+```text
+{cs2md_map_name}
+{cs2md_round_phase}
+HP {cs2md_player_hp}
+{cs2md_weapon_name}
+{cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
+```
+
+You're done! 🎉 Everything below is reference material.
+
+---
+
+## Requirements
+
+- This is a plugin for **Macro Deck 2**. It is not a standalone app.
 - Counter-Strike 2 must be configured with a `gamestate_integration_*.cfg` file.
 - The listener is local only and binds to `127.0.0.1`.
 - Default listener port: `3333`.
@@ -23,6 +143,10 @@ It receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes t
 Official Valve GSI documentation:
 
 https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_State_Integration
+
+## Preview
+
+![Macro Deck CS2 dashboard sample](docs/images/sample.png)
 
 ## Features
 
@@ -63,7 +187,7 @@ Create this file in the CS2 config folder:
 Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
 ```
 
-Paste this config:
+Paste this config (same as in [Quick Start](#quick-start)):
 
 ```text
 "CS2 Macro Deck GSI"
@@ -175,7 +299,7 @@ HP {cs2md_player_hp}
 
 Advanced variables for all players, grenades, map round wins, current-player weapon slots, and raw JSON are available from the plugin settings.
 
-See [docs/VARIABLES.md](docs/VARIABLES.md) for the full variable guide and more button examples.
+See [docs/VARIABLES.md](docs/VARIABLES.md) for the full variable guide and more button examples ([Italiano](docs/VARIABLES.it.md)).
 
 ## Status Values
 
