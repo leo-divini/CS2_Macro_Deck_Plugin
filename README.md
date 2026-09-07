@@ -2,6 +2,19 @@
 
 ![CS2 GSI for Macro Deck icon](ExtensionIcon.png)
 
+## Used technologies
+
+![C#](https://img.shields.io/badge/-C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)
+![.NET 8](https://img.shields.io/badge/.NET%208-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Macro Deck](https://img.shields.io/badge/Macro%20Deck-Plugin-1f6feb?style=for-the-badge)
+
+![Language IT](https://img.shields.io/badge/Language-IT-yellow?style=for-the-badge)
+![Language EN](https://img.shields.io/badge/Language-EN-red?style=for-the-badge)
+
+![Stelle](https://img.shields.io/github/stars/leo-divini/CS2_Macro_Deck_Plugin?style=for-the-badge)
+![Ultimo commit](https://img.shields.io/github/last-commit/leo-divini/CS2_Macro_Deck_Plugin?style=for-the-badge)
+
 > Live Counter-Strike 2 game state on your Macro Deck: HP, money, ammo, bomb state, round info and more — as button labels, colors, conditions and actions.
 >
 > The plugin receives CS2 GSI payloads locally on `http://127.0.0.1:3333/` and publishes them as Macro Deck variables.
