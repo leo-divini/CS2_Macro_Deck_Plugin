@@ -10,11 +10,13 @@
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
-Get everything working in about **5 minutes**. Details are in the sections below.
+Get everything working in **5 minutes**. Details below.
 
-### 1️⃣ Install the plugin
+### 1️ Install the plugin
+
+Install from the official store and skip to step 2, or:
 
 Copy the plugin folder into Macro Deck:
 
@@ -32,17 +34,15 @@ Plugin.png
 ExtensionIcon.png
 ```
 
-Restart Macro Deck.
-
-### 2️⃣ Add the CS2 GSI config
-
+### 2️ Add the CS2 GSI config
+Restart Macro Deck
 Create this file in the CS2 config folder:
 
 ```text
 Counter-Strike Global Offensive\game\csgo\cfg\gamestate_integration_cs2md.cfg
 ```
 
-Paste this config and save:
+Paste this config (or edit it only if you know what you are doing) and save:
 
 ```text
 "CS2 Macro Deck GSI"
@@ -87,27 +87,31 @@ Paste this config and save:
 
 Restart CS2.
 
-### 3️⃣ Verify it works
+### 3️ Verify it works
 
-Start Macro Deck, launch [Counter-Strike 2 on Steam](https://store.steampowered.com/app/730/CounterStrike_2/) and enter a live match (or a training session). Then open:
+Start Macro Deck, launch [Counter-Strike 2 on Steam](https://store.steampowered.com/app/730/CounterStrike_2/) and enter a live match (or a training session, even if there aren't any other players). Then open:
 
 ```text
 http://127.0.0.1:3333/state
 ```
 
-You should see values like:
+You should see JSON values like:
 
-```text
-HasPayload = true
-Provider.AppId = 730
-Map.Name = de_mirage / de_inferno / ...
-Player.Name = your CS2 name
-Player.ActiveWeapon = weapon_...
+```json
+{
+    "HasPayload": true,
+    "Provider": { "AppId": 730 },
+    "Map": { "Name": "de_mirage" },
+    "Player": {
+        "Name": "your CS2 name",
+        "ActiveWeapon": "weapon_..."
+    }
+}
 ```
 
 Still empty? See [Troubleshooting](#troubleshooting).
 
-### 4️⃣ Use the variables
+### 4️ Use the variables
 
 Macro Deck placeholders use underscores instead of dots:
 
@@ -119,16 +123,17 @@ Button text:     {cs2md_player_hp}
 Example button label:
 
 ```text
-{cs2md_map_name}
-{cs2md_round_phase}
+Map name: {cs2md_map_name}
+Round: {cs2md_round_phase}
 HP {cs2md_player_hp}
-{cs2md_weapon_name}
-{cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
+Weapon: {cs2md_weapon_name}
+Ammo: {cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
 ```
 
-You're done! 🎉 Everything below is reference material.
 
----
+> [!TIP]
+> You're done! 🎉 Everything below is reference material.
+
 
 ## Requirements
 
@@ -155,7 +160,7 @@ https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_S
 - Configurable listener token and port.
 - Configurable variable categories.
 - Default variable set kept small for normal gameplay.
-- Optional advanced variables for observer/spectator data, all players, grenades, raw JSON, and debugging.
+- Optional advanced variables for phase countdowns, player position and direction, bomb position and carrier, all players, grenades, raw JSON, and debugging.
 - Actions to refresh the latest CS2 state and reset the local listener.
 - Debug endpoints for `/state` and `/raw`.
 
@@ -297,7 +302,7 @@ HP {cs2md_player_hp}
 {cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
 ```
 
-Advanced variables for all players, grenades, map round wins, current-player weapon slots, and raw JSON are available from the plugin settings.
+Advanced variables for phase countdowns, player position and direction, bomb position and carrier, all players, grenades, map round wins, current-player weapon slots, and raw JSON are available from the plugin settings.
 
 See [docs/VARIABLES.md](docs/VARIABLES.md) for the full variable guide and more button examples ([Italiano](docs/VARIABLES.it.md)).
 
@@ -327,14 +332,18 @@ Open this URL while Macro Deck is running:
 http://127.0.0.1:3333/state
 ```
 
-Expected values after CS2 sends data:
+Expected JSON values after CS2 sends data:
 
-```text
-HasPayload = true
-Provider.AppId = 730
-Map.Name = de_mirage / de_inferno / ...
-Player.Name = your CS2 name
-Player.ActiveWeapon = weapon_...
+```json
+{
+    "HasPayload": true,
+    "Provider": { "AppId": 730 },
+    "Map": { "Name": "de_mirage" },
+    "Player": {
+        "Name": "your CS2 name",
+        "ActiveWeapon": "weapon_..."
+    }
+}
 ```
 
 To inspect the latest raw CS2 payload:
@@ -385,7 +394,7 @@ Usually available during normal player gameplay:
 - `player_weapons`
 - `player_match_stats`
 
-Often observer/spectator-only according to Valve:
+Often available in observer/spectator modes, depending on the CS2 payload and camera state:
 
 - `allplayers_*`
 - `allgrenades`

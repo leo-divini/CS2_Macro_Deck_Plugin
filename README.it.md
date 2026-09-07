@@ -16,7 +16,7 @@ Fai funzionare tutto in circa **5 minuti**. I dettagli sono nelle sezioni qui so
 
 ### 1️⃣ Installa il plugin
 
-Copia la cartella del plugin dentro Macro Deck:
+Installa il plugin dallo store ufficiale e passa al punto 2, oppure copia la cartella del plugin dentro Macro Deck:
 
 ```text
 %AppData%\Macro Deck\plugins\LeoM.Cs2Gsi
@@ -95,14 +95,18 @@ Avvia Macro Deck, lancia [Counter-Strike 2 su Steam](https://store.steampowered.
 http://127.0.0.1:3333/state
 ```
 
-Dovresti vedere valori come:
+Dovresti vedere valori JSON come:
 
-```text
-HasPayload = true
-Provider.AppId = 730
-Map.Name = de_mirage / de_inferno / ...
-Player.Name = il tuo nome CS2
-Player.ActiveWeapon = weapon_...
+```json
+{
+    "HasPayload": true,
+    "Provider": { "AppId": 730 },
+    "Map": { "Name": "de_mirage" },
+    "Player": {
+        "Name": "il tuo nome CS2",
+        "ActiveWeapon": "weapon_..."
+    }
+}
 ```
 
 Ancora vuoto? Vedi [Risoluzione dei problemi](#risoluzione-dei-problemi).
@@ -297,7 +301,7 @@ HP {cs2md_player_hp}
 {cs2md_weapon_ammo_clip}/{cs2md_weapon_ammo_clip_max}
 ```
 
-Le variabili avanzate per tutti i giocatori, granate, vittorie di round per mappa, slot armi del giocatore corrente e JSON grezzo sono disponibili dalle impostazioni del plugin.
+Le variabili avanzate per countdown di fase, posizione e direzione del giocatore, posizione e carrier della bomba, tutti i giocatori, granate, vittorie di round per mappa, slot armi del giocatore corrente e JSON grezzo sono disponibili nelle impostazioni del plugin.
 
 Vedi [docs/VARIABLES.it.md](docs/VARIABLES.it.md) per la guida completa alle variabili e altri esempi di pulsanti.
 
@@ -327,14 +331,18 @@ Apri questo URL mentre Macro Deck è in esecuzione:
 http://127.0.0.1:3333/state
 ```
 
-Valori attesi dopo che CS2 ha inviato i dati:
+Valori JSON attesi dopo che CS2 ha inviato i dati:
 
-```text
-HasPayload = true
-Provider.AppId = 730
-Map.Name = de_mirage / de_inferno / ...
-Player.Name = il tuo nome CS2
-Player.ActiveWeapon = weapon_...
+```json
+{
+    "HasPayload": true,
+    "Provider": { "AppId": 730 },
+    "Map": { "Name": "de_mirage" },
+    "Player": {
+        "Name": "il tuo nome CS2",
+        "ActiveWeapon": "weapon_..."
+    }
+}
 ```
 
 Per ispezionare l'ultimo payload grezzo di CS2:
@@ -385,7 +393,7 @@ Di solito disponibili durante il gameplay normale del giocatore:
 - `player_weapons`
 - `player_match_stats`
 
-Spesso solo da osservatore/spettatore secondo Valve:
+Spesso disponibili nelle modalità osservatore/spettatore, in base al payload CS2 e allo stato della telecamera:
 
 - `allplayers_*`
 - `allgrenades`

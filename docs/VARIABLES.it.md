@@ -185,7 +185,7 @@ I gruppi opzionali possono essere abilitati nelle impostazioni del plugin.
 
 ### Slot Armi del Giocatore Corrente
 
-L'inventario del giocatore corrente è esposto come `cs2md.pw01` fino a `cs2md.pw08`.
+I campi dell'inventario del giocatore corrente sono esposti sotto `cs2md.pw01` fino a `cs2md.pw08`; usa un campo figlio come `cs2md.pw01.name`.
 
 | Pattern | Esempio di Placeholder | Tipo |
 | --- | --- | --- |
@@ -214,7 +214,7 @@ Sostituisci `01` con `02` fino a `08` per gli altri slot.
 
 ### Altri Giocatori
 
-I payload da osservatore/spettatore sono esposti come `cs2md.ap01` fino a `cs2md.ap10`.
+I campi degli altri giocatori sono esposti sotto `cs2md.ap01` fino a `cs2md.ap10` quando CS2 fornisce il blocco di tutti i giocatori; usa campi figli come `cs2md.ap01.name`.
 
 | Pattern | Esempio di Placeholder | Tipo |
 | --- | --- | --- |
@@ -242,7 +242,7 @@ Sostituisci il primo `01` per lo slot del giocatore e il secondo `01` per lo slo
 
 ### Granate
 
-I payload delle granate da osservatore/spettatore sono esposti come `cs2md.g01` fino a `cs2md.g16`.
+I campi delle granate sono esposti sotto `cs2md.g01` fino a `cs2md.g16` quando CS2 fornisce i dati delle granate; usa campi figli come `cs2md.g01.type`.
 
 | Pattern | Esempio di Placeholder | Tipo |
 | --- | --- | --- |
@@ -274,7 +274,7 @@ Spesso disponibili durante il gameplay normale:
 - `player_weapons`
 - `player_match_stats`
 
-Spesso solo da osservatore/spettatore secondo Valve:
+Spesso disponibili nelle modalità osservatore/spettatore, in base al payload CS2 e allo stato della telecamera:
 
 - `allplayers_*`
 - `allgrenades`

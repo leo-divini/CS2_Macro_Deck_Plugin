@@ -185,7 +185,7 @@ Optional groups can be enabled in the plugin settings.
 
 ### Current Player Weapon Slots
 
-Current-player inventory is exposed as `cs2md.pw01` through `cs2md.pw08`.
+Current-player inventory fields are exposed under `cs2md.pw01` through `cs2md.pw08`; use a child field such as `cs2md.pw01.name`.
 
 | Pattern | Placeholder Example | Type |
 | --- | --- | --- |
@@ -214,7 +214,7 @@ Replace `01` with `02` through `08` for other slots.
 
 ### Other Players
 
-Observer/spectator payloads are exposed as `cs2md.ap01` through `cs2md.ap10`.
+Other-player fields are exposed under `cs2md.ap01` through `cs2md.ap10` when CS2 provides the all-players block; use child fields such as `cs2md.ap01.name`.
 
 | Pattern | Placeholder Example | Type |
 | --- | --- | --- |
@@ -242,7 +242,7 @@ Replace the first `01` for the player slot and the second `01` for that player's
 
 ### Grenades
 
-Observer/spectator grenade payloads are exposed as `cs2md.g01` through `cs2md.g16`.
+Grenade fields are exposed under `cs2md.g01` through `cs2md.g16` when CS2 provides grenade data; use child fields such as `cs2md.g01.type`.
 
 | Pattern | Placeholder Example | Type |
 | --- | --- | --- |
@@ -274,7 +274,7 @@ Often available during normal gameplay:
 - `player_weapons`
 - `player_match_stats`
 
-Often observer/spectator-only according to Valve:
+Often available in observer/spectator modes, depending on the CS2 payload and camera state:
 
 - `allplayers_*`
 - `allgrenades`
